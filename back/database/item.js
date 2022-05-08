@@ -4,7 +4,7 @@ const db = require('./index')
 const addItem = async item => {
   try{
     const query = {
-      text : 'INSERT INTO items VALUES ($1,$2,$3,$4,$5) RETURNING *',
+      text : `INSERT INTO items VALUES ($1,$2,$3,$4,$5) RETURNING *`,
       values : [
         item.id,
         item.name,
@@ -23,17 +23,25 @@ const addItem = async item => {
 }
 const addItemPart = async itemPart => {
   try{
-    const res = await db.query('INSERT INTO item_part VALUES ($1,$2)',[itemPart.itemId, itemPart.part])
+    const res = await db.query(`INSERT INTO item_part
+                              (item_id,part_of_item_id)
+                               VALUES ($1,$2)`,
+                               [
+                                 itemPart.itemId,
+                                 itemPart.part
+                                ])
     return res.rows
   }catch(e){
-
+    console.log(e)
   }
 }
 
 const addItemGold = async itemGold => {
   try{
     const query = {
-      text : 'INSERT INTO item_gold VALUES ($1,$2,$3,$4)',
+      text : `INSERT INTO item_gold
+              (item_id,base,total,sell)
+              VALUES ($1,$2,$3,$4)`,
       values : [
         itemGold.id,
         itemGold.base,
@@ -50,7 +58,7 @@ const addItemGold = async itemGold => {
 
 const addItemTag = async tag => {
   try{
-    const res = await db.query('INSERT INTO item_tags VALUES ($1)',[tag])
+    const res = await db.query('INSERT INTO item_tags (tag) VALUES ($1)',[tag])
   }catch(e){
     console.log(e)
   }
@@ -60,7 +68,10 @@ const addItemTagRel = async (tag,idItem) => {
   try{
     const resTag = await db.query('SELECT id FROM item_tags WHERE tag = $1',[tag])
     const resIdTag = resTag.rows[0].id
-    const res = await db.query('INSERT INTO item_tags_interm VALUES ($1,$2)',[resIdTag,idItem])
+    const res = await db.query(`INSERT INTO item_tags_interm 
+                              (champion_tag_id,champion_id)
+                               VALUES ($1,$2)`,
+                               [resIdTag,idItem])
     return res.rows
   }catch(e){
     console.log(e)

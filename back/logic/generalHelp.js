@@ -25,8 +25,16 @@ const isUppercase = c => {
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-const isNumber = n => {
+const isNumber = n => {}
 
+const waitLimit = async res =>{
+  if(res.status !==200){
+    console.log('Retry after : ',res.headers['retry-after'])
+    await delay(res.headers['retry-after']*1000)
+    return true
+  }
+  return false
+  
 }
 
 
@@ -36,5 +44,6 @@ const isNumber = n => {
 module.exports = {
   toRegexUppercase,
   delay,
-  isNumber
+  isNumber,
+  waitLimit,
 }

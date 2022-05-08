@@ -10,9 +10,13 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "all-the-package-names": "^2.0.67",
     "axios": "^0.26.1",
+    "cors": "^2.8.5",
+    "create-react-app": "^5.0.1",
     "express": "^4.17.3",
     "nodemon": "^2.0.15",
-    "pg": "^8.7.3"
+    "pg": "^8.7.3",
+    "react": "^18.1.0"
   }
 }

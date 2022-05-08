@@ -10,7 +10,7 @@ const fs = require('fs')
 
 const profileIconPopulator = async () => {
   try{
-    const file = '/home/heivagar/Documents/Code/express/lol/general/dragontail-12.7.1/12.7.1/data/en_US/profileicon.json'
+    const file = 'general/dragontail-12.7.1/12.7.1/data/en_US/profileicon.json'
     const f = fs.readFile(file, (err, data) => {
       if(err) throw err
       const icons = JSON.parse(data)
@@ -19,7 +19,7 @@ const profileIconPopulator = async () => {
         dbIcon.addIcon(icons.data[key])
       }
     })
-    return {status: ok}
+    return {status: "ok"}
   }catch(e){
     console.log(e)
   }
@@ -27,18 +27,17 @@ const profileIconPopulator = async () => {
 
 // Champion populators
 
-const championPopulator = () => {
+const championPopulator = async () => {
   try{
-    const file = '/home/heivagar/Documents/Code/express/lol/general/dragontail-12.7.1/12.7.1/data/en_US/championFull.json'
-    const f = fs.readFile(file, (err, data) => {
+    const file = 'general/dragontail-12.7.1/12.7.1/data/en_US/championFull.json'
+    const f = fs.readFile(file, async (err, data) => {
       if(err) throw err
       const champions = JSON.parse(data)
       for (var key in champions.data){
-        dbChampion.addChampion({'version':champions.version,...champions.data[key]})
-        // dbChampion.addSkin(champions.data[key])
-        skinPopulator(champions.data[key])
-        champTagPopulator(champions.data[key])
-        relChampTagPopulator(champions.data[key])
+        await dbChampion.addChampion({'version':champions.version,...champions.data[key]})
+        await skinPopulator(champions.data[key])
+        await champTagPopulator(champions.data[key])
+        await relChampTagPopulator(champions.data[key])
       }
     })
     return {'status': 'ok'}
@@ -47,21 +46,21 @@ const championPopulator = () => {
   }
 }
 
-const skinPopulator = (champ) => {
+const skinPopulator = async(champ) => {
   for (var key in champ.skins){
-    dbChampion.addSkin({'chId':champ.key,...champ.skins[key]})
+    await dbChampion.addSkin({'chId':champ.key,...champ.skins[key]})
   }
 }
 
-const champTagPopulator = champ => {
+const champTagPopulator =async champ => {
   for (var key in champ.tags){
-    dbChampion.addTag(champ.tags[key])
+    await dbChampion.addTag(champ.tags[key])
   }
 }
 
-const relChampTagPopulator = champ => {
+const relChampTagPopulator = async champ => {
   for (var key in champ.tags){
-    dbChampion.addTagRel({'tag':champ.tags[key],'chId':champ.key})
+    await dbChampion.addTagRel({'tag':champ.tags[key],'chId':champ.key})
   }
 }
 
@@ -72,24 +71,24 @@ const allChamps = async () => {
 // Items populators 
 
 const itemPopulator = async () => {
-  const file = '/home/heivagar/Documents/Code/express/lol/general/dragontail-12.7.1/12.7.1/data/en_US/item.json'
-    const f = fs.readFile(file, (err, data) => {
+  const file = 'general/dragontail-12.7.1/12.7.1/data/en_US/item.json'
+    const f = fs.readFile(file, async(err, data) => {
       if(err) throw err
       const items = JSON.parse(data)
       for (var key in items.data){
-        dbItem.addItem({'id': key,...items.data[key]})
-        itemPartPopulator(items.data[key],key)
-        itemGoldPopulator(items.data[key],key)
-        itemTagPopulator(items.data[key])
-        itemTagRelPopulator(items.data[key],key)
+        await dbItem.addItem({'id': key,...items.data[key]})
+        await itemPartPopulator(items.data[key],key)
+        await itemGoldPopulator(items.data[key],key)
+        await itemTagPopulator(items.data[key])
+        await itemTagRelPopulator(items.data[key],key)
       }
     })
 }
 
 const itemPartPopulator = async (item,itemId) => {
-  if (item.into) {
-    item.into.forEach((part) => {
-    dbItem.addItemPart({'part': parseInt(part),'itemId' : itemId})
+  if ('into' in item) {
+    item.into.forEach(async (part) => {
+    await dbItem.addItemPart({'part': parseInt(part),'itemId' : parseInt(itemId)})
   })}
 }
 
@@ -99,7 +98,7 @@ const itemGoldPopulator = async (item,itemId) => {
     }
 }
 
-const itemTagPopulator = (item) => {
+const itemTagPopulator = async (item) => {
   if (item.tags){
     item.tags.forEach(async (tag) => {
       await dbItem.addItemTag(tag)
@@ -108,7 +107,7 @@ const itemTagPopulator = (item) => {
   }
 }
 
-const itemTagRelPopulator = (item,itemId) => {
+const itemTagRelPopulator = async (item,itemId) => {
   if (item.tags){
     item.tags.forEach(async (tag) => {
       await dbItem.addItemTagRel(tag,itemId)
@@ -119,12 +118,13 @@ const itemTagRelPopulator = (item,itemId) => {
 // Summoner spells populators
 
 const summonerSpellPopulator = async() => {
-  const file = '/home/heivagar/Documents/Code/express/lol/general/dragontail-12.7.1/12.7.1/data/en_US/summoner.json'
-    const f = fs.readFile(file, (err, data) => {
+  const file = 'general/dragontail-12.7.1/12.7.1/data/en_US/summoner.json'
+    const f = fs.readFile(file, async(err, data) => {
       if(err) throw err
       const spells = JSON.parse(data)
-      for (var key in spells){
-        dbSpell.addSummonerSpell(spells.data[key])
+      for (var key in spells.data){
+        // console.log(spells.data[key])
+       await dbSpell.addSummonerSpell(spells.data[key])
       }
     })
 
@@ -133,7 +133,7 @@ const summonerSpellPopulator = async() => {
 // Runes populators
 
 const runesPopulator = async() => {
-  const file = '/home/heivagar/Documents/Code/express/lol/general/dragontail-12.7.1/12.7.1/data/en_US/runesReforged.json'
+  const file = 'general/dragontail-12.7.1/12.7.1/data/en_US/runesReforged.json'
     const f = fs.readFile(file, (err, data) => {
       if(err) throw err
       const runes = JSON.parse(data)

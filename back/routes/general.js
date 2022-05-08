@@ -6,6 +6,7 @@ const summonerControl = require('../logic/summoner_control')
 const populators = require('../logic/populators')
 const mC = require('../logic/matchControl')
 const summonerPopulator = require('../logic/summonerPopulator')
+const leagueControl = require('../logic/leagueControl')
 
 
 router.get('/summoner/:summonerName', async (req,res,next) => {
@@ -49,7 +50,10 @@ router.get('/populators/runes', async (req,res,next) => {
   return res.json(result)
 })
 
-
+router.get('/populators/league', async (req,res,next) => {
+  const result = await leagueControl.populateLeague()
+  return res.json(result)
+})
 
 
 router.get('/get/allChamps', async (req,res,next) => {

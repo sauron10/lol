@@ -39,9 +39,13 @@ const updateSummoner = async summName => {
 
 const requestSummoner = async summName => {
   try{
-    const encSummName = encodeURI(summName)    
-    const response = await axios.get(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encSummName}`,connection.config)
-    await gH.delay(1600)
+    const encSummName = encodeURI(summName) 
+    var flag = true
+    var response = []   
+    while(flag){
+      response = await axios.get(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encSummName}`,connection.config)
+      flag = await gH.waitLimit(response)
+    }
     console.log(response.data)
     return response.data
   }catch(e){

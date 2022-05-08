@@ -4,7 +4,7 @@ const addSummonerIcon = async summ => {
 
   try{
     const query ={
-      text : 'INSERT INTO profile_icon_summoner VALUES ($1,$2)',
+      text : 'INSERT INTO profile_icon_summoner (summoner_id,profile_icon_id) VALUES ($1,$2)',
       values : [
         summ.id,
         summ.profileIconId,

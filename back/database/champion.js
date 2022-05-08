@@ -45,7 +45,7 @@ const addSkin = async skin => {
 
 const addTag = async tag => {
   try{
-    const res = await db.query('INSERT INTO champion_tags VALUES ($1)',[tag])
+    const res = await db.query('INSERT INTO champion_tags (tag) VALUES ($1)',[tag])
     return res.rows
   }catch(e){
     console.log(e)
@@ -58,7 +58,7 @@ const addTagRel = async obj => {
     const tagIdRows = await db.query('SELECT id FROM champion_tags WHERE tag = $1',[obj.tag]) 
     const tagId = tagIdRows.rows[0].id
     console.log("tagId",tagId)
-    const res = await db.query('INSERT INTO champion_tags_interm VALUES ($1,$2)',[tagId,obj.chId])
+    const res = await db.query('INSERT INTO champion_tags_interm (champion_tag_id,champion_id) VALUES ($1,$2)',[tagId,obj.chId])
     return res.rows
   }catch(e){
     console.log(e)

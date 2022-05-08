@@ -29,8 +29,22 @@ const addSummonerDB = async summ => {
   }
 }
 
+const getSummonerList = async () => {
+  try{
+    const res = await db.query(
+      'select * from summoner limit 5000',
+      [])
+    return res.rows
+    
+
+  }catch(e){
+    console.log('Eror with getSummonerList :',e)
+  }
+}
+
 
 module.exports = {
   getSummonerDB,
   addSummonerDB,
+  getSummonerList,
 }

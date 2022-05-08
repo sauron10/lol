@@ -19,7 +19,9 @@ const addMatch = async (match) => {
 const addMatchRel = async (match,summ) => {
   try{
     const query = {
-      text : 'INSERT INTO match_summoner VALUES ($1,$2)',
+      text : `INSERT INTO match_summoner
+              (summoner_id,match_id)
+              VALUES ($1,$2)`,
       values : [
         summ.id,
         match,        
@@ -214,7 +216,7 @@ const completeMatchRel = async (match,summoner) => {
     const res = await db.query(query)
     return res.rows
   }catch(e){
-    console.log(e)
+    console.log("Match summoner error :",e)
   }  
 }
 
@@ -223,7 +225,9 @@ const addChampionMatch = async (match,summoner,matchSummonerId) => {
     const summ = await singleSummoner(match,summoner)
 
     const res = await db.query(
-      'INSERT INTO champion_ms VALUES($1,$2)',
+      `INSERT INTO champion_ms
+       (champion_id,match_summoner_id)
+      VALUES($1,$2)`,
       [summ.championId,
       matchSummonerId])
 
@@ -253,7 +257,9 @@ const addItemMatch = async (match,summoner,matchSummonerId) => {
       if(item !== 0){
         try{
           const res = await db.query(
-            'INSERT INTO match_summoner_items VALUES($1,$2)',
+            `INSERT INTO match_summoner_items
+             (item_id,match_summoner_id) 
+            VALUES($1,$2)`,
             [item,
             matchSummonerId]
             )
@@ -287,7 +293,7 @@ const getMatchSummoner = async (matchId,summonerId) => {
         summonerId,
         matchId,                        
       ])
-    return res.rows[0]   
+    return res.rows 
   }catch(e){
     console.log(e)
   }                   
@@ -303,7 +309,9 @@ const addSummonerSpellRel  = async (match,summoner,matchSummId) => {
     spellList.forEach(async (spell) => {
       try{
         const res = await db.query(
-          'INSERT INTO summoner_spells_ms VALUES ($1,$2)',
+          `INSERT INTO summoner_spells_ms
+          (match_summoner_id,summoner_spell_id)
+          VALUES ($1,$2)`,
           [
             matchSummId,
             spell
@@ -335,7 +343,10 @@ const addMatchMasteries = async (match,summoner,matchSummId) => {
 
       try{
         const res = await db.query(
-          'INSERT INTO match_summoner_runes VALUES ($1,$2,$3,$4,$5)',
+          `INSERT INTO match_summoner_runes
+          (match_summoner_id,rune_id,var1,
+            var2,var3)
+          VALUES ($1,$2,$3,$4,$5)`,
           [
             matchSummId,
             rune.perk,
@@ -374,7 +385,7 @@ const addMatchChallenges = async (match,summoner,matchSummId) => {
     const query = {
       'text' : `INSERT INTO challenges
                 VALUES(
-                  $1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
+                  DEFAULT,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,
                   $11,$12,$13,$14,$15,$16,$17,$18,$19,$20,
                   $21,$22,$23,$24,$25,$26,$27,$28,$29,$30,
                   $31,$32,$33,$34,$35,$36,$37,$38,$39,$40,
