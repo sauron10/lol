@@ -69,7 +69,7 @@ const addItemTagRel = async (tag,idItem) => {
     const resTag = await db.query('SELECT id FROM item_tags WHERE tag = $1',[tag])
     const resIdTag = resTag.rows[0].id
     const res = await db.query(`INSERT INTO item_tags_interm 
-                              (champion_tag_id,champion_id)
+                              (item_tag_id,item_id)
                                VALUES ($1,$2)`,
                                [resIdTag,idItem])
     return res.rows
