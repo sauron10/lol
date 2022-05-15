@@ -19,8 +19,11 @@ router.get('/summonerList', async (req,res,next) => {
   return res.json(result)
 })
 
-router.get('/:summonerName', async (req,res,next) => {
-  const result  = await summonerControl.summonerPage(req.params.summonerName)
+router.get('/:summonerName/', async (req,res,next) => {
+  const data ='start' in req.query ? {...req.params,...req.query} : req.params
+  
+  console.log(data)
+  const result  = await summonerControl.summonerPage(data)
   return res.json(result)
 })
 

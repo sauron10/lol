@@ -53,11 +53,14 @@ const requestSummoner = async summName => {
   }  
 }
 
-const summonerPage = async summonerName => {
+const summonerPage = async data => {
   try{
-    const name = gH.toRegexUppercase(summonerName)
-    const response = await dbSummInt.getSummonerInfo(name,10)
-    return response
+    const name = gH.toRegexUppercase(data.summonerName)
+    if ('start' in data){
+      return await dbSummInt.getMatches(name,parseInt(data.start),10)
+    }
+    return await dbSummInt.getSummonerInfo(name,10)
+
 
   }catch(e){
     console.log('Summoner page error :',e)
