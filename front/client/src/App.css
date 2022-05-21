@@ -51,7 +51,7 @@ body{
 
 
 
-td >.columns{
+td >.columns,.item-column{
   min-width: 150px;
   max-width: 150px;
 
@@ -68,9 +68,24 @@ table{
 
 .win{
   background: #0ec917;
+  border-radius: 1em 0 0 1em;
 }
 
 .lose{
   background: #b90808;
+  border-radius: 1em 0 0 1em;
+  max-width: 1px;
 }
 
+.mscard{
+  background:#0F4C75;
+}
+
+.date{
+  position: absolute;
+  top: 3px;
+}
+
+.transparent{
+  opacity: .6;
+}

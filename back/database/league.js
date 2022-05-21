@@ -3,7 +3,7 @@ const db = require('./index')
 const addLeague = async league => {
   try{
     const res = await db.query(
-      'INSERT INTO league VALUES($1,$2,$3)',
+      `INSERT INTO league VALUES($1,$2,$3)`,
       [
         league.leagueId,
         league.queueType,

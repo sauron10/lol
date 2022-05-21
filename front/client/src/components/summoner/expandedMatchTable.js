@@ -39,7 +39,7 @@ export const ExpandedMatchTable = (props) => {
         </td>
         <td>
           <div className="is-size-6">
-            <p>{props.player.current_summoner_name}</p>
+            <a href={`/summoner/${props.player.current_summoner_name}`}>{props.player.current_summoner_name}</a>
           </div>
         </td>
         <td>
@@ -63,10 +63,10 @@ export const ExpandedMatchTable = (props) => {
         <td>
           <div className="is-size-7">
             <p>
-              cs:{props.player.neutral_minions_killed} (
+              cs:{props.player.minions_killed} (
               {(
-                props.player.neutral_minions_killed /
-                (props.player.game_duration / 1000 / 60)
+                props.player.minions_killed /
+                (props.player.game_duration / 60)
               ).toFixed(1)}
               )
             </p>

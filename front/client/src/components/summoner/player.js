@@ -6,7 +6,7 @@ export const Player = (props) => {
   return (
     <>
       <div className="column is-half">
-        <div className="columns is-gapless">
+        <div className="columns is-gapless is-mobile">
           <div className="column is-narrow">
             <figure className="image is-16x16">
               <img
@@ -22,7 +22,7 @@ export const Player = (props) => {
         </div>
       </div>
       <div className="column is-half">
-        <div className="columns is-gapless">
+        <div className="columns is-gapless is-mobile">
           <div className="column is-narrow">
             <figure className="image is-16x16">
               <img
@@ -30,7 +30,7 @@ export const Player = (props) => {
               />
             </figure>
           </div>
-          <div className="column">
+          <div className="column is-narrow">
             <p className="has-text-left p-0 has-text-light is-size-7">
               {safeName(props.playerPair[1].current_summoner_name)}
             </p>

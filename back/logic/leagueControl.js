@@ -6,6 +6,17 @@ const gH = require('./generalHelp')
 
 
 
+const checkLeague = async summId => {
+  try{
+    const league = await dbLeague.getLeagueRel(summId)
+    if (league.length < 1){
+      return await requestLeague(summId)
+    }
+    return league
+  }catch(e){
+    console.log("There was an error searching for the summoner league")
+  }
+}
 
 const requestLeague = async summId => {
   try{
@@ -27,6 +38,8 @@ const requestLeague = async summId => {
   }
 }
 
+
+
 const populateLeague = async () => {
   try{
     const summList = await dbSummoner.getSummonerList()
@@ -47,5 +60,6 @@ const populateLeague = async () => {
 module.exports = {
   requestLeague,
   populateLeague,
+  checkLeague,
 }
 

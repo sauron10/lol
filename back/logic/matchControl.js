@@ -8,26 +8,27 @@ const gH = require('./generalHelp')
 const leagueControl = require('./leagueControl')
 
 
-const checkMatch = async summonerName => {
+const checkMatch = async (query) => {
   try{
-    const summ = await sC.checkSummoner(summonerName)
+    const summ = await sC.checkSummoner(query.summoner)
+    console.log(summ)
     if(!summ){
       return {'result' : 'Does not exist'}
     }
     // await gH.delay(1600)
-    const match = await requestMatchList(...summ)
+    const match = await requestMatchList(summ[0],query.queue,query.start,query.count)
     return match
   }catch(e){
     console.log(e)
   }
 }
 
-const requestMatchList = async summ => {
+const requestMatchList = async (summ,queue,start,count =10) => {
   try{
     var flag = true
     var response = []
     while(flag){
-      response = await axios.get(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${summ.puuid}/ids?type=ranked&start=0&count=100`,connection.config)
+      response = await axios.get(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${summ.puuid}/ids?queue=${queue}&start=${start}&count=${count}`,connection.config)
       flag = await gH.waitLimit(response)
     }
     for (const match of response.data){
@@ -51,6 +52,8 @@ const updateMatch = async (data,summ) => {
   try{
     await dbMatch.completeMatch(data)
     await dbMatch.completeMatchRel(data,summ)
+    await formTeam(data)
+    // await dbMatch.addBans(data)
     const [matchSummoner] = await dbMatch.getMatchSummoner(data.metadata.matchId,summ.id)
     await dbMatch.addChampionMatch(data,summ,matchSummoner.id)
     await dbMatch.addItemMatch(data,summ,matchSummoner.id)
@@ -61,6 +64,43 @@ const updateMatch = async (data,summ) => {
     console.log(e)
   }
   
+}
+
+const formTeam = async match => {
+  const teams = match.info.teams
+
+  teams.map(async (team) => {
+    const obj = team.objectives
+    const bans = team.bans
+    const t = {
+      'matchId' : match.metadata.matchId,
+      'firstBaron' : obj.baron.first,
+      'baronKills' : obj.baron.kills,
+      'firstChampion' : obj.champion.first,
+      'championKills' : obj.champion.kills,
+      'firstDragon' : obj.dragon.first,
+      'dragonKills' : obj.dragon.kills,
+      'firstInhibitor' : obj.inhibitor.first,
+      'inhibitorKills' : obj.inhibitor.kills,
+      'firstHerald' : obj.riftHerald.first,
+      'heraldKills' : obj.riftHerald.kills,
+      'firstTower' : obj.tower.first,
+      'towerKills' : obj.tower.kills,
+      'teamNumber' : team.teamId,
+    }
+    const res = await dbMatch.addTeam(t)
+    // console.log("These is my team",team)
+    // console.log("These are my bans",bans)
+    bans.map(async (ban) => {
+      // console.log("Adding Ban")
+      const banDb = await dbMatch.addBans({
+        'teamId' : res[0].id,
+        'championId': ban.championId,
+        'pickTurn' : ban.pickTurn
+      })
+    })
+  })
+
 }
 
 const requestMatch = async match => {
@@ -135,4 +175,5 @@ const recursiveMatch = async match => {
 
 module.exports = {
   checkMatch,
+  requestMatchList,
 }

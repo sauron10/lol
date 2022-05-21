@@ -10,7 +10,6 @@ const toRegexUppercase = s => {
     }
     return `${item}`
   }).join('')
-  
 }
 
 const isLetter = c => {
@@ -29,6 +28,11 @@ const isNumber = n => {}
 
 const waitLimit = async res =>{
   if(res.status !==200){
+    if(res.status !==429){
+      console.log('Error waiting 1 min',res)
+      await delay(60000)
+      return true
+    } 
     console.log('Retry after : ',res.headers['retry-after'])
     await delay(res.headers['retry-after']*1000)
     return true
@@ -38,8 +42,8 @@ const waitLimit = async res =>{
 }
 
 
-// const res =toRegexUppercase('sauron10')
-// console.log(res)
+// const res =toRegexUppercase('But Her Lettuce ')
+// console.log(res,'miau')
 
 module.exports = {
   toRegexUppercase,

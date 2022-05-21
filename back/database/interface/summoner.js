@@ -1,7 +1,7 @@
 const db = require('../index')
 const sqlTools = require('../sql_helper')
 
-const getSummonerInfo = async (summonerName, numberOfMatches) => {
+const getSummonerInfo = async (summonerName, numberOfMatches,queue) => {
 
   const numberFlag = Number.isInteger(numberOfMatches)
 
@@ -50,7 +50,7 @@ const getSummonerInfo = async (summonerName, numberOfMatches) => {
   JOIN match_summoner ms ON m.id = ms.match_id
   JOIN champion_ms cm ON ms.id = cm.match_summoner_id
   JOIN champion c ON c.id = cm.champion_id
-  WHERE ms.summoner_id = s.id
+  WHERE ms.summoner_id = s.id ${queue}
   ORDER BY game_creation DESC
   FETCH FIRST ${number} ROWS ONLY
   `)
@@ -82,7 +82,7 @@ const getSummonerInfo = async (summonerName, numberOfMatches) => {
   }
 }
 
-const getMatches = async (summonerName,start,number) => {
+const getMatches = async (summonerName,start,number,queue='') => {
   const summoners = sqlTools.nestQuery(`
   SELECT *
   FROM summoner_spells_ms ssm
@@ -126,7 +126,7 @@ const getMatches = async (summonerName,start,number) => {
   JOIN match_summoner ms ON m.id = ms.match_id
   JOIN champion_ms cm ON ms.id = cm.match_summoner_id
   JOIN champion c ON c.id = cm.champion_id
-  WHERE ms.summoner_id = s.id
+  WHERE ms.summoner_id = s.id ${queue}
   ORDER BY game_creation DESC
   LIMIT ${number} OFFSET ${start}
   `)

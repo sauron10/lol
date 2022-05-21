@@ -1,7 +1,6 @@
 import { ImageEmblem } from "./importImage";
 
 const SummonerCard = (props) => {
-  // console.log(props.summoner)
   return (
     <div id="summCard" className="container has-text-centered px-2">
       <div className="image is-128x128 is-inline-block mt-5">
@@ -14,9 +13,11 @@ const SummonerCard = (props) => {
       <p className="title is-size-2 has-text-light my-1">
         {props.summoner.summoner_name}
       </p>
+      <button className="button my-3" onClick={props.updateProfile}>{props.loaded ? 'Update' : 'Loading...'}</button>
       <div>
-        {props.summoner.leagues.map((l) => (
-          <ImageEmblem emblem={l} key={l.date} />
+        {props.summoner.leagues && props.summoner.leagues.map((l,i,arr) => (
+          i < 2 &&
+          <ImageEmblem emblem={l} key={`${l.date}/${l.queue_type}`} />
         ))}
       </div>
     </div>

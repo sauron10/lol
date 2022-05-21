@@ -20,10 +20,13 @@ router.get('/summonerList', async (req,res,next) => {
 })
 
 router.get('/:summonerName/', async (req,res,next) => {
-  const data ='start' in req.query ? {...req.params,...req.query} : req.params
-  
-  console.log(data)
+  const data =('start' in req.query) || ('queue' in req.query) ? {...req.params,...req.query} : req.params
   const result  = await summonerControl.summonerPage(data)
+  return res.json(result)
+})
+
+router.get('/:summonerName/update', async (req,res,next) => {
+  const result  = await summonerControl.updateSummoner({...(req.params),...(req.query)})
   return res.json(result)
 })
 
@@ -65,7 +68,8 @@ router.get('/get/allChamps', async (req,res,next) => {
 })
 
 router.get('/get/:summoner/matches', async (req,res,next) => {
-  const result = await mC.checkMatch(req.params.summoner)
+  const data = ('queue' in req.query) || ('start' in req.query) ||('count' in req.query) ? {...req.params,...req.query}:{...req.params,'queue':'','start':0,'count':20}
+  const result = await mC.checkMatch(data)
   return res.json({'result' : "done"})
 })
 

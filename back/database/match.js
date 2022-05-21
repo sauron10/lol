@@ -43,8 +43,10 @@ const completeMatch = async match => {
                   game_duration = $2,
                   game_mode = $3,
                   game_type = $4,
-                  game_version = $5
-              WHERE id = $6
+                  game_version = $5,
+                  platform = $6,
+                  queue_id = $7
+              WHERE id = $8
             `,
       values : [
         match.info.gameCreation,
@@ -52,6 +54,8 @@ const completeMatch = async match => {
         match.info.gameMode,
         match.info.gameType,
         match.info.gameVersion,
+        match.info.platformId,
+        match.info.queueId,
         match.metadata.matchId,
       ]
     }
@@ -115,7 +119,7 @@ const completeMatchRel = async (match,summoner) => {
                   total_damage_dealt = $44,
                   total_damage_dealt_champs = $45,
                   total_damage_taken = $46,
-                  neutral_minions_killed = $47,
+                  minions_killed = $47,
                   participant = $48,
                   sight_wards = $49,
                   summoner_spell_casts_1 = $50,
@@ -187,7 +191,7 @@ const completeMatchRel = async (match,summoner) => {
         summ.totalDamageDealt,// total_damage_dealt = $44,
         summ.totalDamageDealtToChampions,// total_damage_dealt_champs = $45,
         summ.totalDamageTaken,// total_damage_taken = $46,
-        summ.neutralMinionsKilled,// neutral_minions_killed = $47,
+        parseInt(summ.totalMinionsKilled) + parseInt(summ.neutralMinionsKilled),// neutral_minions_killed = $47,
         summ.participantId,// participant = $48,
         summ.sightWardsBoughtInGame,// sight_wards = $49,
         summ.summoner1Casts,// summoner_spell_casts_1 = $50,
@@ -218,6 +222,60 @@ const completeMatchRel = async (match,summoner) => {
   }catch(e){
     console.log("Match summoner error :",e)
   }  
+}
+
+const addTeam = async (match) => {
+  try{
+    const res = await db.query(`
+      INSERT INTO team
+      (match_id,
+      first_baron,baron_kills,
+      first_champion,champion_kills,
+      first_dragon,dragon_kills,
+      first_inhibitor,inhibitor_kills,
+      first_herald,herald_kills,
+      first_tower,tower_kills,
+      team_number)
+      VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+      RETURNING id
+    
+    
+    `,[match.matchId,
+      match.firstBaron,
+      match.baronKills,
+      match.firstChampion,
+      match.championKills,
+      match.firstDragon,
+      match.dragonKills,
+      match.firstInhibitor,
+      match.inhibitorKills,
+      match.firstHerald,
+      match.heraldKills,
+      match.firstTower,
+      match.towerKills,
+      match.teamNumber
+      ])
+
+      return res.rows
+  }catch(e){
+    console.log("Error in addTeam",e)
+  }
+
+}
+
+const addBans = async (match) => {
+  try{
+    const res = await db.query(`
+    INSERT INTO bans
+    (team_id,champion_id,pick_turn)
+    VALUES($1,$2,$3)
+    `,[match.teamId,
+      match.championId,
+      match.pickTurn])
+    return res.rows
+  }catch(e){
+    console.log('Error in addBans',e)
+  }
 }
 
 const addChampionMatch = async (match,summoner,matchSummonerId) => {
@@ -502,4 +560,6 @@ module.exports = {
   addSummonerSpellRel,
   addMatchMasteries,
   addMatchChallenges,
+  addTeam,
+  addBans,
 }
