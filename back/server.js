@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
 
@@ -7,8 +8,10 @@ const ladderRouter = require('./routes/ladder')
 const generalRouter = require('./routes/general')
 
 app.use(cors())
+app.use(express.json())
 app.use(ladderRouter)
 app.use(generalRouter)
+
 
 
 const PORT = process.env.PORT || '8080'

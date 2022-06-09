@@ -3,7 +3,12 @@ const db = require('./index')
 const addSummonerSpell = async spell => {
   try{
     const query = {
-      text : 'INSERT INTO summoner_spells VALUES($1,$2,$3,$4,$5)',
+      text : `INSERT INTO summoner_spells VALUES($1,$2,$3,$4,$5)
+              ON CONFLICT (id) DO UPDATE SET
+              name = EXCLUDED.name,
+              cooldown = EXCLUDED.cooldown,
+              description = EXCLUDED.description,
+              image = EXCLUDED.image`,
       values : [
         parseInt(spell.key),
         spell.name,

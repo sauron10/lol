@@ -1,15 +1,17 @@
 import Search from '../components/searchDialog';
 import Nav from '../components/nav'
-import { useWindowDimensions } from '../customHooks/window';
+import { useAuthentication} from '../components/authenticationContext';
+
+
 
 const Home = () => {
-  const {height,width} = useWindowDimensions()
+  const authenticated = useAuthentication(); 
 
   return (
+
     <div>
-      <p>{`${height}/${width}`}</p>
-      <Nav />
-      <Search />
+      <Nav page={'home'}/>
+      {authenticated && <Search />}
     </div>
   )
 }

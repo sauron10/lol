@@ -16,6 +16,7 @@ export const AuthenticationProvider = ({children}) => {
   const [isAuthenticated, setAuthentication] = useState(false)
   
   const toggleAuthentication = () => {
+    console.log('toggled')
     setAuthentication(prev => !prev)
   }
   

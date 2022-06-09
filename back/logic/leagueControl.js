@@ -23,11 +23,12 @@ const requestLeague = async summId => {
     var flag = true
     var res = []
     while (flag){
+      await gH.timer()
       res = await axios.get(`https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/${summId}`,connection.config)
       flag = await gH.waitLimit(res)
     }
     await res.data.forEach(async(league) => {
-      console.log(league)
+      // console.log(league)
       await dbLeague.addLeague(league)
       await dbLeague.addLeagueRel(league)
     })

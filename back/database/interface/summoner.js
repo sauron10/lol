@@ -2,7 +2,7 @@ const db = require('../index')
 const sqlTools = require('../sql_helper')
 
 const getSummonerInfo = async (summonerName, numberOfMatches,queue) => {
-
+  console.log(summonerName)
   const numberFlag = Number.isInteger(numberOfMatches)
 
   const number = numberFlag ? numberOfMatches : 10
@@ -40,12 +40,28 @@ const getSummonerInfo = async (summonerName, numberOfMatches,queue) => {
   ORDER BY team, participant
   `)
 
+  const bans = sqlTools.nestQuery(`
+  SELECT name,image
+  FROM bans ba
+  JOIN champion ON ba.champion_id = champion.id
+  WHERE ba.team_id = te.id
+  `)
+
+  const teams = sqlTools.nestQuery(`
+  SELECT *,
+  ${bans} as bans
+  FROM team te
+  WHERE te.match_id = m.id 
+  ORDER BY te.team_number 
+  `)
+
   const matches = sqlTools.nestQuery(`
   SELECT *,
   ${summoners} as summoner_spells,
   ${runes} as runes,
   ${items} as items,
-  ${players} as players
+  ${players} as players,
+  ${teams} as teams
   FROM match m 
   JOIN match_summoner ms ON m.id = ms.match_id
   JOIN champion_ms cm ON ms.id = cm.match_summoner_id
@@ -70,19 +86,18 @@ const getSummonerInfo = async (summonerName, numberOfMatches,queue) => {
   FROM summoner s
   JOIN profile_icon_summoner pis on pis.summoner_id = s.id
   JOIN profile_icon pi on pi.id = pis.profile_icon_id
-  WHERE s.summoner_name SIMILAR TO $1
+  WHERE lower(s.summoner_name) = lower($1)
   
   `,[
     summonerName,
   ])
-
   return {
     'rows' : response.rows.length,
     'data' : response.rows
   }
 }
 
-const getMatches = async (summonerName,start,number,queue='') => {
+const getMatches = async (summonerName,start,number,queue='',champion) => {
   const summoners = sqlTools.nestQuery(`
   SELECT *
   FROM summoner_spells_ms ssm
@@ -116,17 +131,33 @@ const getMatches = async (summonerName,start,number,queue='') => {
   ORDER BY team, participant
   `)
 
+  const bans = sqlTools.nestQuery(`
+  SELECT name,image
+  FROM bans ba
+  JOIN champion ON ba.champion_id = champion.id
+  WHERE ba.team_id = te.id
+  `)
+
+  const teams = sqlTools.nestQuery(`
+  SELECT *,
+  ${bans} as bans
+  FROM team te
+  WHERE te.match_id = m.id
+  ORDER BY te.team_number   
+  `)
+
   const matches = sqlTools.nestQuery(`
   SELECT *,
   ${summoners} as summoner_spells,
   ${runes} as runes,
   ${items} as items,
-  ${players} as players
+  ${players} as players,
+  ${teams} as teams
   FROM match m 
   JOIN match_summoner ms ON m.id = ms.match_id
   JOIN champion_ms cm ON ms.id = cm.match_summoner_id
   JOIN champion c ON c.id = cm.champion_id
-  WHERE ms.summoner_id = s.id ${queue}
+  WHERE ms.summoner_id = s.id ${queue} ${champion}
   ORDER BY game_creation DESC
   LIMIT ${number} OFFSET ${start}
   `)
@@ -135,7 +166,7 @@ const getMatches = async (summonerName,start,number,queue='') => {
   SELECT 
   ${matches} as matches
   FROM summoner s
-  WHERE s.summoner_name SIMILAR TO $1
+  WHERE lower(s.summoner_name) = lower($1)
   `,[summonerName])
 
   return response.rows

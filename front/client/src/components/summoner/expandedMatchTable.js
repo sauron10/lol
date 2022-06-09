@@ -2,6 +2,7 @@ import { Spell } from "./spell";
 import { Rune } from "./rune";
 import { isMainRune } from "./helperFunc";
 import { Item } from "./item";
+import { useNavigate } from "react-router-dom";
 
 export const ExpandedMatchTable = (props) => {
   const handleColor = () => {
@@ -9,10 +10,17 @@ export const ExpandedMatchTable = (props) => {
     return className
   }
 
+  const handleClick = () => {
+    navigate(`/summoner/${props.player.current_summoner_name}`)
+  }
+
+  const navigate= useNavigate()
+
   const className = props.player.win ? 'win-row' : 'lose-row'
   return (
     <>
-      <tr className={className}>
+      <tr>
+        <td className={className}></td>
         <td>
           <div className="image is-48x48">
             <img
@@ -38,8 +46,8 @@ export const ExpandedMatchTable = (props) => {
           </div>
         </td>
         <td>
-          <div className="is-size-6">
-            <a href={`/summoner/${props.player.current_summoner_name}`}>{props.player.current_summoner_name}</a>
+          <div className="is-size-6 clickable" onClick={handleClick}>
+            <p>{props.player.current_summoner_name}</p>
           </div>
         </td>
         <td>

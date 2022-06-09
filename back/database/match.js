@@ -3,7 +3,15 @@ const db = require('./index')
 const addMatch = async (match) => {
   try{
     const query = {
-      text : 'INSERT INTO match VALUES ($1)',
+      text : `INSERT INTO match VALUES ($1)
+              ON CONFLICT (id) DO UPDATE SET
+              game_creation = EXCLUDED.game_creation,
+              game_duration = EXCLUDED.game_duration,
+              game_mode = EXCLUDED.game_mode,
+              game_type = EXCLUDED.game_type,
+              game_version = EXCLUDED.game_version,
+              platform = EXCLUDED.platform,
+              queue_id = EXCLUDED.queue_id`,
       values : [
         match
       ]
@@ -12,7 +20,7 @@ const addMatch = async (match) => {
     return res
 
   }catch(e){
-    console.log(e)
+    console.log('Error adding a match: ',e)
   } 
 } 
 
@@ -21,7 +29,8 @@ const addMatchRel = async (match,summ) => {
     const query = {
       text : `INSERT INTO match_summoner
               (summoner_id,match_id)
-              VALUES ($1,$2)`,
+              VALUES ($1,$2)
+              ON CONFLICT (summoner_id,match_id) DO NOTHING`,
       values : [
         summ.id,
         match,        
@@ -31,7 +40,7 @@ const addMatchRel = async (match,summ) => {
     return res
 
   }catch(e){
-    console.log(e)
+    console.log('Error adding match relationship: ',e)
   } 
 }
 
@@ -63,7 +72,7 @@ const completeMatch = async match => {
     const res  = await db.query(query)
     return res.rows
   }catch(e){
-    console.log(e)
+    console.log('Error updating the complete match: ',e)
   }
 
 
@@ -237,6 +246,7 @@ const addTeam = async (match) => {
       first_tower,tower_kills,
       team_number)
       VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
+      ON CONFLICT (match_id,team_number) DO NOTHING
       RETURNING id
     
     
@@ -269,6 +279,7 @@ const addBans = async (match) => {
     INSERT INTO bans
     (team_id,champion_id,pick_turn)
     VALUES($1,$2,$3)
+    ON CONFLICT (team_id,champion_id) DO NOTHING
     `,[match.teamId,
       match.championId,
       match.pickTurn])
@@ -285,14 +296,16 @@ const addChampionMatch = async (match,summoner,matchSummonerId) => {
     const res = await db.query(
       `INSERT INTO champion_ms
        (champion_id,match_summoner_id)
-      VALUES($1,$2)`,
+      VALUES($1,$2)
+      ON CONFLICT (champion_id,match_summoner_id) DO NOTHING`,
+
       [summ.championId,
       matchSummonerId])
 
   return res.rows
 
   }catch(e){
-    console.log(e)
+    console.log('Error adding champion match',e)
   }
 
   
@@ -317,7 +330,8 @@ const addItemMatch = async (match,summoner,matchSummonerId) => {
           const res = await db.query(
             `INSERT INTO match_summoner_items
              (item_id,match_summoner_id) 
-            VALUES($1,$2)`,
+            VALUES($1,$2)
+            ON CONFLICT (item_id,match_summoner_id) DO NOTHING`,
             [item,
             matchSummonerId]
             )
@@ -327,7 +341,7 @@ const addItemMatch = async (match,summoner,matchSummonerId) => {
       }      
     })
   }catch(e){
-    console.log(e)
+    console.log('Error adding item match: ',e)
   }
   
 }
@@ -366,10 +380,12 @@ const addSummonerSpellRel  = async (match,summoner,matchSummId) => {
                       ]
     spellList.forEach(async (spell) => {
       try{
+        if (spell === 0) return 
         const res = await db.query(
           `INSERT INTO summoner_spells_ms
           (match_summoner_id,summoner_spell_id)
-          VALUES ($1,$2)`,
+          VALUES ($1,$2)
+          ON CONFLICT (match_summoner_id,summoner_spell_id) DO NOTHING`,
           [
             matchSummId,
             spell
@@ -380,7 +396,7 @@ const addSummonerSpellRel  = async (match,summoner,matchSummId) => {
       }      
     })                  
   }catch(e){
-    console.log(e)
+    console.log('Error adding summoner spell rel: ',e)
   }
 }
 
@@ -400,26 +416,28 @@ const addMatchMasteries = async (match,summoner,matchSummId) => {
     runeList.forEach(async(rune) => {
 
       try{
+        if (rune?.perk === 0) return
         const res = await db.query(
           `INSERT INTO match_summoner_runes
           (match_summoner_id,rune_id,var1,
             var2,var3)
-          VALUES ($1,$2,$3,$4,$5)`,
+          VALUES ($1,$2,$3,$4,$5)
+          ON CONFLICT (rune_id,match_summoner_id) DO NOTHING`,
           [
             matchSummId,
-            rune.perk,
-            rune.var1,
-            rune.var2,
-            rune.var3
+            rune?.perk,
+            rune?.var1,
+            rune?.var2,
+            rune?.var3
           ]
         )
       }catch(e){
-        console.log(e)
+        console.log('Error adding match runes: ',e)
       }
       
     })
   }catch(e){
-    console.log()
+    console.log('Error in preparation to add match runes: ',e)
   }
 }
 
@@ -440,6 +458,7 @@ const addMatchChallenges = async (match,summoner,matchSummId) => {
     const summ = await singleSummoner(match,summoner)
     const challenges = summ.challenges
     // console.log(challenges)
+    if(challenges === null || challenges === undefined) return
     const query = {
       'text' : `INSERT INTO challenges
                 VALUES(
@@ -452,7 +471,8 @@ const addMatchChallenges = async (match,summoner,matchSummId) => {
                   $61,$62,$63,$64,$65,$66,$67,$68,$69,$70,
                   $71,$72,$73,$74,$75,$76,$77,$78,$79,$80,
                   $81,$82,$83
-                )`,
+                )
+                ON CONFLICT (id) DO NOTHING`,
       'values' : [
         matchSummId,
         challenges['12AssistStreakCount'],
@@ -542,7 +562,7 @@ const addMatchChallenges = async (match,summoner,matchSummId) => {
     const response = await db.query(query)
     return response.rows
   }catch(e){
-    console.log('Challenges error',e)
+    console.log('Challenges error: ',e)
   }
 
 }

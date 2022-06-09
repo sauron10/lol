@@ -7,37 +7,37 @@ export const useGetSummoner = summonerName => {
   const [data, setData ] = useState(null)
   const [loaded,setLoaded] = useState(false)
 
-  const updateData = async(num,queue) => {
+  const updateData = useCallback(async(num,queue,champion='') => {
     try{
       setLoaded(false)
-      const res = await axios.get(`http://localhost:8080/${summonerName}/?start=${num}&queue=${queue}`)
-      const data = res.data[0].matches === null ? []:res.data[0].matches
-      res.status === 200 && setData(prevData => {return {...prevData,'matches':[...prevData['matches'],...data]}})
+      console.log('Updating data')
+      const res = await axios.get(`http://localhost:8080/${summonerName}/?start=0&queue=${queue}&size=${num}&champion=${champion}`)
+      const data = res?.data[0]?.matches === null ? []:res?.data[0]?.matches
+      res.status === 200 && setData(prevData => {return {...prevData,'matches':data}})
     }catch (e) {
       console.log('Update axios error',e)
     } finally {
       setLoaded(true)
     }
-  }
+  },[summonerName])
 
-  const updateQueue = useCallback(async(queue) => {
+  const getSeasonMatches = async() =>{
     try{
       setLoaded(false)
-      const res = await axios.get(`http://localhost:8080/${summonerName}/?queue=${queue}&start=0`)
-      const data = res.data[0].matches === null ? []:res.data[0].matches
-      res.status === 200 && setData(prevData => {return {...prevData,'matches': data}})
+      const res = await axios.get(`http://localhost:8080/${summonerName}/season/?startTime=1641549600`)
+      return res
     }catch(e){
-      console.log('Update queue error')
-    }finally{
+      console.log('Season matches error: ',e)
+    } finally{
       setLoaded(true)
     }
-  },[summonerName])
+  }
 
   const updateProfileData = async (selectedTab) => {
     try{
       setLoaded(false)
       const res = await axios.get(`http://localhost:8080/${summonerName}/update/?queue=${selectedTab}`)
-      res.status === 200 && setData(res.data.data[0])
+      res.status === 200 && setData(res.data?.data[0])
     }catch(e){
       console.log('Error updating Profile Data')
     }finally{
@@ -66,5 +66,5 @@ export const useGetSummoner = summonerName => {
 
   // useEffect(useCallback(() => getData,[]),[])
 
-  return [data,updateData,updateQueue,loaded,updateProfileData]
+  return [data,updateData,loaded,updateProfileData,getSeasonMatches]
 }

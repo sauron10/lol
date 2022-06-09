@@ -12,7 +12,7 @@ const Search = () => {
     try {
       // console.log(summonerName)
       navigate(`/summoner/${summonerName}`);
-      window.location.reload();
+      // window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -36,6 +36,7 @@ const Search = () => {
                 <input
                   className="button is-primary is-centered"
                   type="submit"
+                  value='Search'
                 />
               </div>
             </div>

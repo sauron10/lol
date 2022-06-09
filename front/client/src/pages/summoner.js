@@ -8,47 +8,61 @@ import { useEffect, useState } from "react";
 import { MatchFilter } from "../components/summoner/matchFilter";
 import { useWindowDimensions } from "../customHooks/window";
 import { MobileSummonerCard } from "../components/summoner/mobileSummonerCard";
+import { BestChamps } from "../components/summoner/champs/bestChamps";
+// import { useAuthentication } from "../components/authenticationContext";
+import { PlayedWith } from "../components/summoner/played/playedWith";
 
-const Summoner = () => {
-  const [data, updateData, updateQueue,loaded,updateProfileData] = useGetSummoner(
+export const Summoner = () => {
+  // const authenticated = useAuthentication();
+  const [data, updateData, loaded, updateProfileData, getSeasonMatches] = useGetSummoner(
     useParams().summonerName
   );
+  // const loadedPage = useRef(false)
   const [index, setIndex] = useState(10);
   const [selectedTab, setSelectedTab] = useState(1);
+  const [champion, setChampion] = useState({ activated: false, champion: {} })
   const { width } = useWindowDimensions()
 
   useEffect(() => {
-    console.log("useEffect ran");
-    setIndex(10)
-    updateQueue(selectedTab);
-  }, [selectedTab, updateQueue]);
+    updateData(index, selectedTab, champion.champion.id);
+    // loadedPage.current = true
+  }, [index, updateData, selectedTab, champion])
+
+  useEffect(() => {
+    setIndex(() => 10)
+  }, [champion])
 
   const loadMore = () => {
-    console.log(selectedTab);
-    updateData(index, selectedTab);
+    // console.log(selectedTab);
     setIndex((prevIndex) => prevIndex + 10);
+
   };
 
   const updateProfile = () => {
     updateProfileData(selectedTab)
   }
 
-  const isLoaded = data !== null;
+  const isLoaded = loaded;
 
-  const hasMatches = () => data.matches.length > 0;
+  const hasMatches = () => {
+    if (data.matches) {
+      return data.matches.length > 0
+    }
+    return false
+  }
 
-  console.log(index)
-  console.log(loaded)
+  // console.log(index)
 
   return (
     <>
-      <Nav />
+      <Nav page={'summoner'} />
       <div className="columns is-centered ">
         {/* First column */}
         <div className="column is-narrow pl-6 pr-4 mt-5 is-hidden-mobile">
-          {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} loaded={loaded} />}
+          {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} />}
+          <PlayedWith summoner={useParams().summonerName} queue={selectedTab} />
         </div>
-        {width < 500 && isLoaded && <MobileSummonerCard  summoner={data} loaded={loaded}/> }
+        {width < 500 && isLoaded && <MobileSummonerCard summoner={data} loaded={loaded} />}
         {/* Second column */}
         <div className="column mt-5">
           <div className="px-6">
@@ -65,7 +79,7 @@ const Summoner = () => {
             </div>
           </div>
           {isLoaded && (
-            <MatchFilter tab={setSelectedTab} selectedTab={selectedTab} />
+            <MatchFilter setSelectedTab={setSelectedTab} selectedTab={selectedTab} setIndex={setIndex} />
           )}
           {isLoaded &&
             hasMatches() &&
@@ -86,10 +100,15 @@ const Summoner = () => {
           </div>
         </div>
         {/* Third column */}
-        <div className="column is-narrow pr-5"></div>
+        <div className="column is-narrow pr-5">
+          <BestChamps summoner={useParams().summonerName}
+            champion={champion}
+            setChampion={setChampion}
+            setSelectedTab={setSelectedTab}
+            data={data?.matches} />
+        </div>
       </div>
     </>
   );
 };
 
-export default Summoner;

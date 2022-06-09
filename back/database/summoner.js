@@ -4,17 +4,21 @@ const db = require('./index')
 const getSummonerDB = async summName => {
   try{
     // console.log(summName)
-    const res = await db.query("SELECT * FROM summoner WHERE summoner_name SIMILAR TO $1",[summName])
+    const res = await db.query("SELECT * FROM summoner WHERE lower(summoner_name) = lower($1)",[summName])
     return res.rows    
   }catch(error){
-    console.error(error)
+    console.log('Error getSummonerDB',error)
   }
 }
 
 const addSummonerDB = async summ => {
   try{
     const query ={
-      text : 'INSERT INTO summoner VALUES ($1,$2,$3,$4)',
+      text : `INSERT INTO summoner VALUES ($1,$2,$3,$4)
+              ON CONFLICT (id) DO UPDATE SET
+              summoner_name = EXCLUDED.summoner_name,
+              puuid = EXCLUDED.puuid,
+              summoner_level = EXCLUDED.summoner_level`,
       values : [
         summ.id,
         summ.name,
@@ -25,7 +29,7 @@ const addSummonerDB = async summ => {
     
     const res = await db.query(query)
   }catch(e){
-    console.log(e)
+    console.log('Error adding a new summoner: ',e)
   }
 }
 
@@ -38,7 +42,7 @@ const getSummonerList = async () => {
     
 
   }catch(e){
-    console.log('Eror with getSummonerList :',e)
+    console.log('Error with getSummonerList :',e)
   }
 }
 

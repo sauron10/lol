@@ -2,6 +2,25 @@ body{
   background: rgba(27,38,44, 1);
 }
 
+.navbar,.navbar-menu { 
+  background-color: #66a2ba;
+}
+
+.navbar-input {
+  max-width: 300px;
+}
+
+/* .navbar{
+  max-width: 50%;
+  position: absolute;
+  left: 25%;
+} */
+
+.main-color{
+  background-color: #0F4C75!important;
+  color: white!important;
+}
+
 #searchBoxContainer {
   margin-top: 200px;
 }
@@ -57,13 +76,20 @@ td >.columns,.item-column{
 
 }
 
-tr{
-  background: rgba(187,225,250, .8);
-
+tr, td{
+  border-radius: 10px;
 }
+
+td {
+  vertical-align: middle !important;
+}
+tr:nth-child(odd) {background-color: rgb(142, 204, 245);}
+tr:nth-child(even) {background-color: rgba(187,225,250);}
 
 table{
   margin: auto;
+  border: 5px solid;
+  border-color: #0F4C75;
 }
 
 .win{
@@ -88,4 +114,43 @@ table{
 
 .transparent{
   opacity: .6;
+}
+
+a:link,a:visited{
+  color: black;
+}
+
+.win-row{
+  background-color: #0ec917;
+  max-width: 7px;
+}
+
+.lose-row{
+  background-color:#b90808;
+  max-width: 7px;
+}
+
+.champ-list > li > a {
+  color: white;
+}
+
+.tab-container{
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.chart-container{
+  max-width: 300px;
+}
+
+.alert{
+  color:red;
+}
+
+.clickable{
+  cursor: pointer;
+}
+
+.played-with{
+  width: 275px;
 }

@@ -6,19 +6,19 @@ const mC = require('../logic/matchControl')
 const leagueControl = require('./leagueControl')
 const gH = require('./generalHelp')
 const dbSummInt = require('../database/interface/summoner')
-
+const intChamps = require('../database/interface/bestChamps')
+const intPlayed = require('../database/interface/playedWith')
 
 
 const checkSummoner = async summName => {
   try{
-    var res = await dbSumm.getSummonerDB(gH.toRegexUppercase(summName))
+    var res = await dbSumm.getSummonerDB(summName)
     if(res.length < 1){
       console.log("Requesting Summoner")
       const resAPI = await requestSummoner(summName)
       const resAddSumm = await dbSumm.addSummonerDB(resAPI)
       const resAddProIcon = await dbIcon.addSummonerIcon(resAPI)
-      console.log('Ugly name',gH.toRegexUppercase(summName))
-      res = await dbSumm.getSummonerDB(gH.toRegexUppercase(summName))
+      res = await dbSumm.getSummonerDB(summName)
       console.log(res)
       await leagueControl.requestLeague(res[0].id)
     }else{
@@ -35,9 +35,10 @@ const checkSummoner = async summName => {
 const requestSummoner = async summName => {
   try{
     const encSummName = encodeURI(summName) 
-    var flag = true
-    var response = []   
+    let flag = true
+    let response = []   
     while(flag){
+      await gH.timer()
       response = await axios.get(`https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/${encSummName}`,connection.config)
       flag = await gH.waitLimit(response)
     }
@@ -50,26 +51,24 @@ const requestSummoner = async summName => {
 
 const summonerPage = async data => {
   try{
-    const name = gH.toRegexUppercase(data.summonerName)
+    const name = data.summonerName
     const [summ] = await checkSummoner(data.summonerName)
-    if ('queue' in data){ 
+    if('queue' in data){
       const queue = data.queue === '1' ? '': `AND m.queue_id = ${data.queue}`
+      console.log({champion : data.champion})
+      const champion = data.champion ? `AND cm.champion_id = ${data.champion}` : ''
       const numericQueue = data.queue === '1' ? '': data.queue
-      var info = await dbSummInt.getMatches(name,parseInt(data.start),10,queue)
-      if (info[0].matches === null){  
-        await mC.requestMatchList(summ,numericQueue,data.start,10)
-        info = await dbSummInt.getMatches(name,parseInt(data.start),10,queue)
+      var info = await dbSummInt.getMatches(name,0,data.size,queue,champion)
+      if (info[0].matches === null || info[0].matches.length < data.size){  
+        await mC.requestMatchList(summ,numericQueue,0,data.size)
+        info = await dbSummInt.getMatches(name,0,data.size,queue,champion)
       }
       return info
     }
-    if ('start' in data){
-      return await dbSummInt.getMatches(name,parseInt(data.start),10)
-    }
     return await dbSummInt.getSummonerInfo(name,10,'')
 
-
   }catch(e){
-    console.log('Summoner page error :',e)
+    console.log('Error getting summoner page: ',e)
   }
 }
 
@@ -83,11 +82,62 @@ const updateSummoner = async (info) =>{
     const query = safeQueue != '' ? `AND m.queue_id = ${safeQueue}` : ''
     
     const matchList = await mC.requestMatchList(summoner,'',0,10)
-    const name = gH.toRegexUppercase(summoner.summoner_name)
-    return await dbSummInt.getSummonerInfo(name,10,query)
-
+    console.log('MatchList: ',matchList)
+    const name = summoner.summoner_name
+    console.log({name,query})
+    const res = await dbSummInt.getSummonerInfo(name,10,query)
+    console.log('Summoner: ',res)
+    return res
   }catch(e){
     console.log('Error updating the summoner',e)
+  }
+}
+
+const filterSummoner = async info => {
+  try{
+    const filters ={
+      'champion' : 0,
+      'win' : 0,
+      'position': 0,
+      ...info
+    }
+
+  }catch(e){
+    console.log("Error in filterSummoner: ",e)
+  }
+}
+
+const getSummonerSeason = async info => {
+  try{
+    // console.log(info)
+    const [summoner] = await checkSummoner(info.summonerName)
+    const matchList = await mC.getSeasonMatches(summoner,info.startTime)
+    const savedMatches = await mC.saveMatchesList(matchList,summoner,10)
+    return {...savedMatches,'list' : matchList}
+
+  }catch(e){
+    console.log('Error in get summoner season :',e)
+  }
+}
+
+const getSummonerBestChamps = async info => {
+  try{
+    const [summoner] = await checkSummoner(info.summonerName)
+    const champList = await intChamps.getBestChamps(summoner,info.queue)
+    return champList
+  }catch(e){
+    console.log('Error in getSumonerBestChamps')
+  }
+}
+
+const getPlayedWith = async info => {
+  try{
+    const {summonerName,queue} = info
+    const queueAnd = queue != 1 ? `and m.queue_id = ${queue}`: ''
+    const summonersPlayedWith = await intPlayed.playedWith(summonerName,queueAnd)
+    return summonersPlayedWith
+  }catch(e){
+    console.log('Error getting played with :', e)
   }
 }
 
@@ -98,4 +148,8 @@ module.exports = {
   requestSummoner,
   summonerPage,
   updateSummoner,
+  filterSummoner,
+  getSummonerSeason,
+  getSummonerBestChamps,
+  getPlayedWith,
 }

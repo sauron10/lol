@@ -4,7 +4,14 @@ const sqlTools = require('./sql_helper')
 const addChampion = async champion => {
   try{
     const query = {
-      text : 'INSERT INTO champion VALUES ($1,$2,$3,$4,$5,$6,$7)',
+      text : `INSERT INTO champion VALUES ($1,$2,$3,$4,$5,$6,$7)
+              ON CONFLICT (id) DO UPDATE SET
+              name = EXCLUDED.name,
+              version = EXCLUDED.version,
+              title = EXCLUDED.title,
+              lore = EXCLUDED.lore,
+              blurb = EXCLUDED.blurb,
+              image = EXCLUDED.image`,
       values : [
         champion.key,
         champion.name,
@@ -18,7 +25,7 @@ const addChampion = async champion => {
     const res = await db.query(query)
     return res.rows
   }catch(e){
-    console.log(e)
+    console.log('Error adding champion: ',e)
   }
 
 }
@@ -26,7 +33,11 @@ const addChampion = async champion => {
 const addSkin = async skin => {
   try{
     const query = {
-      text : 'INSERT INTO champion_skins VALUES ($1,$2,$3,$4,$5)',
+      text : `INSERT INTO champion_skins VALUES ($1,$2,$3,$4,$5)
+              ON CONFLICT (id) DO UPDATE SET
+              name = EXCLUDED.name,
+              num = EXCLUDED.num,
+              chromas = EXCLUDED.chromas`,
       values : [
         skin.id,
         skin.chId,
@@ -38,17 +49,17 @@ const addSkin = async skin => {
     const res = await db.query(query)
     return res.rows
   }catch(e){
-    console.log(e)
+    console.log('Error adding skin: ',e)
   }
 
 }
 
 const addTag = async tag => {
   try{
-    const res = await db.query('INSERT INTO champion_tags (tag) VALUES ($1)',[tag])
+    const res = await db.query('INSERT INTO champion_tags (tag) VALUES ($1) ON CONFLICT (tag) DO NOTHING',[tag])
     return res.rows
   }catch(e){
-    console.log(e)
+    console.log('Error adding a tag: ',e)
   }
   
 }
@@ -57,11 +68,10 @@ const addTagRel = async obj => {
   try{
     const tagIdRows = await db.query('SELECT id FROM champion_tags WHERE tag = $1',[obj.tag]) 
     const tagId = tagIdRows.rows[0].id
-    console.log("tagId",tagId)
-    const res = await db.query('INSERT INTO champion_tags_interm (champion_tag_id,champion_id) VALUES ($1,$2)',[tagId,obj.chId])
+    const res = await db.query('INSERT INTO champion_tags_interm (champion_tag_id,champion_id) VALUES ($1,$2) ON CONFLICT (champion_tag_id,champion_id) DO NOTHING',[tagId,obj.chId])
     return res.rows
   }catch(e){
-    console.log(e)
+    console.log('Error adding a tag rel: ',e)
   }  
 }
 

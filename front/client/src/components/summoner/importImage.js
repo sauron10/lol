@@ -9,7 +9,7 @@ export const ImageEmblem = (props) => {
 
   // console.log(toLowupCase(props.emblem))
   return (
-    <div className="my-6 has-text-light">
+    <div className="my-5 has-text-light">
       <div>
         <p className="title is-size-6 has-text-light">
           {props.emblem.queue_type}
@@ -23,7 +23,10 @@ export const ImageEmblem = (props) => {
         />
       </div>
       <div>
-        <p className="mt-2">{`${props.emblem.wins}  /  ${props.emblem.losses}`}</p>
+        <p className="is-size-3">{props.emblem.rank}</p>
+      </div>
+      <div>
+        <p className="">{`${props.emblem.wins}  /  ${props.emblem.losses} : ${(props.emblem.wins / (props.emblem.wins + props.emblem.losses)*100).toFixed(1)}%`}</p>
       </div>
     </div>
   );
