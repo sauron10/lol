@@ -1,5 +1,6 @@
 import { useReducer } from "react"
 import axios from "axios"
+import { vars } from "../../page-assets/route"
 
 const ACTIONS = {
   'SET_USERNAME': 1,
@@ -88,7 +89,7 @@ export const AuthenticationModal = (props) => {
   const handleSubmit = async(e) => {
     e.preventDefault()
     try{
-      const res  = await axios.post('/api/signup',{
+      const res  = await axios.post(`${vars.route}/signup`,{
         username : state.username,
         email : state.email,
         password : state.password

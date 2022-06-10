@@ -1,5 +1,6 @@
 import { useState, useEffect} from "react";
 import axios from "axios";
+import { vars } from "../page-assets/route";
 
 export const useGetChamps = (summonerName, queue) => {
 
@@ -9,7 +10,7 @@ export const useGetChamps = (summonerName, queue) => {
     const getChamps = async () => {
       try {
         console.log('Champ effect ran')
-        const champs = await axios.get(`/api/${summonerName}/champion/rank?queue=${queue}`)
+        const champs = await axios.get(`${vars.route}/${summonerName}/champion/rank?queue=${queue}`)
         // console.log(champs)
         return champs
       } catch (e) {

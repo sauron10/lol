@@ -3,11 +3,12 @@ const express = require('express')
 const cors = require('cors')
 
 const app = express()
+app.use(cors())
 
 const ladderRouter = require('./routes/ladder')
 const generalRouter = require('./routes/general')
 
-app.use(cors())
+
 app.use(express.json())
 app.use(ladderRouter)
 app.use(generalRouter)

@@ -12,6 +12,7 @@ import { SuccessModal } from "./authentication/succesModal";
 import { LoginModal } from "./authentication/loginModal";
 import axios from "axios";
 import Cookies from "js-cookie";
+import { vars } from "../page-assets/route";
 
 
 const Nav = (props) => {
@@ -24,7 +25,7 @@ const Nav = (props) => {
 
   useEffect(() => {
     const axiosCall = async() =>{
-      const res = await axios.post('/api/signin',{
+      const res = await axios.post(`${vars.route}/signin`,{
         username:Cookies.get('username'),
         token: Cookies.get('authToken')
       })
