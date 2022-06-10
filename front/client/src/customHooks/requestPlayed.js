@@ -9,7 +9,7 @@ export const useGetPlayed = (summonerName, queue) => {
     const getPlayed = async () => {
       try {
         // console.log('Played effect ran')
-        const playedWith = await axios.get(`http://localhost:8080/${summonerName}/played/?queue=${queue}`)
+        const playedWith = await axios.get(`https://localhost/${summonerName}/played/?queue=${queue}`)
         return playedWith
       } catch (e) {
         console.log('Error getting champs: ', e)
