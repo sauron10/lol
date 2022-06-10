@@ -88,7 +88,7 @@ export const AuthenticationModal = (props) => {
   const handleSubmit = async(e) => {
     e.preventDefault()
     try{
-      const res  = await axios.post('http://localhost:8080/signup',{
+      const res  = await axios.post('https://www.lstats.xyz/api/signup',{
         username : state.username,
         email : state.email,
         password : state.password
