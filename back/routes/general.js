@@ -10,6 +10,10 @@ const uC = require('../logic/user_control')
 
 router.get('/favicon.ico', async(req,res,next) => res.status(404) )
 
+router.get('/', async (req,res,next) => {
+  return res.json({miau:'miau'})
+})
+
 router.get('/summoner/:summonerName', async (req,res,next) => {
   const result  = await summonerControl.checkSummoner(req.params.summonerName)
   return res.json(result)
