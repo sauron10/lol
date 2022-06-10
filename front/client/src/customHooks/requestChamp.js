@@ -9,7 +9,7 @@ export const useGetChamps = (summonerName, queue) => {
     const getChamps = async () => {
       try {
         console.log('Champ effect ran')
-        const champs = await axios.get(`https://localhost/${summonerName}/champion/rank?queue=${queue}`)
+        const champs = await axios.get(`https://www.lstats.xyz/api/${summonerName}/champion/rank?queue=${queue}`)
         // console.log(champs)
         return champs
       } catch (e) {
