@@ -24,7 +24,7 @@ const Nav = (props) => {
 
   useEffect(() => {
     const axiosCall = async() =>{
-      const res = await axios.post('http://localhost:8080/signin',{
+      const res = await axios.post('/api/signin',{
         username:Cookies.get('username'),
         token: Cookies.get('authToken')
       })
