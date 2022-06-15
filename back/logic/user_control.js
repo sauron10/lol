@@ -23,11 +23,11 @@ const createUser = async (body) => {
       sanEmail,
       hashedPassword,
     })
-    const token = jwt.sign({username},process.env.PRIVATE_KEY,{ expiresIn: '1800s' })
-    return ({token,username,...res})
+    const token = jwt.sign({username},process.env.PRIVATE_KEY,{ expiresIn: '24h' })
+    return ({token,username,...res,status:200})
   } catch (e) {
     console.log("Error creating user: ", e)
-    return ({ status: 'error' })
+    return ({ status: 400,error:e })
   }
 }
 
@@ -61,7 +61,7 @@ const signIn = async (body) => {
     const {username,password} = body
     const [user] = await validate(username)
     if(!await bcrypt.compare(password,user.password)) throw 'The password is incorrect'
-    const token = jwt.sign({username},process.env.PRIVATE_KEY,{ expiresIn: '1800s' })
+    const token = jwt.sign({username},process.env.PRIVATE_KEY,{ expiresIn: '24h' })
     return({
       token,
       username:user.name,

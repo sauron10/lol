@@ -1,6 +1,7 @@
 import { useState, useEffect} from "react";
 import axios from "axios";
 import { vars } from "../page-assets/route";
+import Cookies from "js-cookie";
 
 export const useGetPlayed = (summonerName, queue) => {
 
@@ -10,7 +11,7 @@ export const useGetPlayed = (summonerName, queue) => {
     const getPlayed = async () => {
       try {
         // console.log('Played effect ran')
-        const playedWith = await axios.get(`${vars.route}/${summonerName}/played/?queue=${queue}`)
+        const playedWith = await axios.get(`${vars.route}/summoner/${summonerName}/played/?queue=${queue}&username=${Cookies.get('username')}&token=${Cookies.get('authToken')}`)
         return playedWith
       } catch (e) {
         console.log('Error getting champs: ', e)

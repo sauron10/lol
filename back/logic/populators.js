@@ -10,7 +10,7 @@ const fs = require('fs')
 
 const profileIconPopulator = async () => {
   try{
-    const file = '../general/12.10.1/data/en_US/profileicon.json'
+    const file = '../general/12.11.1/data/en_US/profileicon.json'
     const f = fs.readFile(file, (err, data) => {
       if(err) throw err
       const icons = JSON.parse(data)
@@ -29,7 +29,7 @@ const profileIconPopulator = async () => {
 
 const championPopulator = async () => {
   try{
-    const file = '../general/12.10.1/data/en_US/championFull.json'
+    const file = '../general/12.11.1/data/en_US/championFull.json'
     const f = fs.readFile(file, async (err, data) => {
       if(err) throw err
       const champions = JSON.parse(data)
@@ -71,7 +71,7 @@ const allChamps = async () => {
 // Items populators 
 
 const itemPopulator = async () => {
-  const file = '../general/12.10.1/data/en_US/item.json'
+  const file = '../general/12.11.1/data/en_US/item.json'
     const f = fs.readFile(file, async(err, data) => {
       if(err) throw err
       const items = JSON.parse(data)
@@ -118,7 +118,7 @@ const itemTagRelPopulator = async (item,itemId) => {
 // Summoner spells populators
 
 const summonerSpellPopulator = async() => {
-  const file = '../general/12.10.1/data/en_US/summoner.json'
+  const file = '../general/12.11.1/data/en_US/summoner.json'
     const f = fs.readFile(file, async(err, data) => {
       if(err) throw err
       const spells = JSON.parse(data)
@@ -133,7 +133,7 @@ const summonerSpellPopulator = async() => {
 // Runes populators
 
 const runesPopulator = async() => {
-  const file = '../general/12.10.1/data/en_US/runesReforged.json'
+  const file = '../general/12.11.1/data/en_US/runesReforged.json'
     const f = fs.readFile(file, (err, data) => {
       if(err) throw err
       const runes = JSON.parse(data)

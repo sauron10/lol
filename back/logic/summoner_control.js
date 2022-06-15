@@ -8,6 +8,7 @@ const gH = require('./generalHelp')
 const dbSummInt = require('../database/interface/summoner')
 const intChamps = require('../database/interface/bestChamps')
 const intPlayed = require('../database/interface/playedWith')
+const { getMatch } = require('../database/match')
 
 
 const checkSummoner = async summName => {
@@ -49,26 +50,88 @@ const requestSummoner = async summName => {
   }  
 }
 
-const summonerPage = async data => {
+// const summonerPage = async data => {
+//   try{
+//     const name = data.summonerName
+//     const [summ] = await checkSummoner(data.summonerName)
+//     if('queue' in data){
+//       const queue = data.queue === '1' ? '': `AND m.queue_id = ${data.queue}`
+//       // console.log({champion : data.champion})
+//       const champion = data.champion ? `AND cm.champion_id = ${data.champion}` : ''
+//       const numericQueue = data.queue === '1' ? '': data.queue
+//       var info = await dbSummInt.getMatches(name,0,data.size,queue,champion)
+//       if (info[0].matches === null || info[0].matches.length < data.size){  
+//         await mC.requestMatchList(summ,numericQueue,0,data.size)
+//         info = await dbSummInt.getMatches(name,0,data.size,queue,champion)
+//       }
+//       return info
+//     }
+//     return await dbSummInt.getSummonerInfo(name,10,'')
+
+//   }catch(e){
+//     console.log('Error getting summoner page: ',e)
+//   }
+// }
+
+// const summonerPage = async data => {
+//   try{
+//     let {name,queue,size,champion,matches} = data
+//     const [summ] = await checkSummoner(name)
+//     if (queue !== undefined){
+//       queue = queue == 1 ? '': queue
+//       const queryQueue = queue == 1 ? '': `AND m.queue_id = ${queue}`
+//       const queryChampion = champion ? `AND cm.champion_id = ${champion}` : ''
+//       let [info] = await dbSummInt.getMatches(name,0,size,queryQueue,queryChampion)
+//       console.log(info)
+//       if (info.matches === null || info.matches.length < size){
+//         await mC.requestMatchList(summ,queue,0,data.size)
+//         info = await dbSummInt.getMatches(name,0,data.size,queue,champion)
+//       }
+//       // return info
+
+//       return info
+//     }
+//     // return await dbSummInt.getSummonerInfo(name,10,'')
+
+//   }catch(e){
+//     console.log('Error geting summoner page : ',e)
+//   }
+// }
+
+const summonerProfile = async data => {
   try{
-    const name = data.summonerName
-    const [summ] = await checkSummoner(data.summonerName)
-    if('queue' in data){
-      const queue = data.queue === '1' ? '': `AND m.queue_id = ${data.queue}`
-      console.log({champion : data.champion})
-      const champion = data.champion ? `AND cm.champion_id = ${data.champion}` : ''
-      const numericQueue = data.queue === '1' ? '': data.queue
-      var info = await dbSummInt.getMatches(name,0,data.size,queue,champion)
-      if (info[0].matches === null || info[0].matches.length < data.size){  
-        await mC.requestMatchList(summ,numericQueue,0,data.size)
-        info = await dbSummInt.getMatches(name,0,data.size,queue,champion)
-      }
-      return info
-    }
-    return await dbSummInt.getSummonerInfo(name,10,'')
+    let {name} = data
+    console.log(name)
+    const [profile] = await dbSummInt.getProfile(name)
+    return ({profile,status:200})
 
   }catch(e){
-    console.log('Error getting summoner page: ',e)
+    console.log('Error getting summoner profile: ',e)
+    return ({error: e, status:400})
+  }
+}
+
+const summonerMatches = async data => {
+  try{
+    let {name,queue,size,champion,matchList} = data
+    const [summ] = await checkSummoner(name)
+    queue = queue == 1 ? '': queue
+    const queryQueue = queue === '' ? queue: `AND m.queue_id = ${queue}`
+    const queryChampion = champion ? `AND cm.champion_id = ${champion}` : ''
+    console.log({name,size,queryQueue,queryChampion})
+    let [info] = await dbSummInt.getMatches(name,0,size,queryQueue,queryChampion)
+    const resMatches = info.matches ?? []
+
+    if(resMatches.length < size ){
+      await mC.requestMatchList(summ,queue,0,size)
+      info = await dbSummInt.getMatches(name,0,size,queryQueue,queryChampion)
+    }
+    const filMatches = resMatches.filter(m => !matchList.includes(m.match_id))
+    return ({matches:filMatches,status:200})
+  }catch(e){
+    console.log('Error getting summoner matches: ',e)
+    return ({status:400,error:e})
+    return 
   }
 }
 
@@ -85,9 +148,11 @@ const updateSummoner = async (info) =>{
     console.log('MatchList: ',matchList)
     const name = summoner.summoner_name
     console.log({name,query})
-    const res = await dbSummInt.getSummonerInfo(name,10,query)
-    console.log('Summoner: ',res)
-    return res
+    const [profile] = await dbSummInt.getProfile(info.summonerName)
+    const [matches] = await dbSummInt.getMatches(info.summonerName,0,10,query,'')
+    const resMatches = matches.matches ?? []
+    // console.log('Summoner: ',res)
+    return ({...profile,matches:resMatches})
   }catch(e){
     console.log('Error updating the summoner',e)
   }
@@ -146,7 +211,8 @@ const getPlayedWith = async info => {
 module.exports = {
   checkSummoner,
   requestSummoner,
-  summonerPage,
+  summonerProfile,
+  summonerMatches,
   updateSummoner,
   filterSummoner,
   getSummonerSeason,

@@ -14,7 +14,7 @@ import { PlayedWith } from "../components/summoner/played/playedWith";
 
 export const Summoner = () => {
   // const authenticated = useAuthentication();
-  const [data, updateData, loaded, updateProfileData, getSeasonMatches] = useGetSummoner(
+  const [data, updateData, loaded, updateProfileData, getSeasonMatches,cleanMatches,getWastedTime] = useGetSummoner(
     useParams().summonerName
   );
   // const loadedPage = useRef(false)
@@ -23,14 +23,18 @@ export const Summoner = () => {
   const [champion, setChampion] = useState({ activated: false, champion: {} })
   const { width } = useWindowDimensions()
 
-  useEffect(() => {
-    updateData(index, selectedTab, champion.champion.id);
-    // loadedPage.current = true
-  }, [index, updateData, selectedTab, champion])
 
   useEffect(() => {
     setIndex(() => 10)
-  }, [champion])
+  }, [champion,selectedTab,data?.summoner_name])
+
+  useEffect(() => {
+    const matchList = data?.matches?.map(match => match?.match_id) ?? []
+
+    updateData(index, selectedTab, champion.champion.id,matchList);
+  }, [index, updateData, selectedTab, champion])
+
+
 
   const loadMore = () => {
     // console.log(selectedTab);
@@ -42,7 +46,7 @@ export const Summoner = () => {
     updateProfileData(selectedTab)
   }
 
-  const isLoaded = loaded;
+  const isLoaded = data !== null;
 
   const hasMatches = () => {
     if (data.matches) {
@@ -59,7 +63,7 @@ export const Summoner = () => {
       <div className="columns is-centered ">
         {/* First column */}
         <div className="column is-narrow pl-6 pr-4 mt-5 is-hidden-mobile">
-          {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} />}
+          {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} getWastedTime={getWastedTime} />}
           <PlayedWith summoner={useParams().summonerName} queue={selectedTab} />
         </div>
         {width < 500 && isLoaded && <MobileSummonerCard summoner={data} loaded={loaded} />}
@@ -79,7 +83,7 @@ export const Summoner = () => {
             </div>
           </div>
           {isLoaded && (
-            <MatchFilter setSelectedTab={setSelectedTab} selectedTab={selectedTab} setIndex={setIndex} />
+            <MatchFilter setSelectedTab={setSelectedTab} selectedTab={selectedTab} setIndex={setIndex} cleanMatches={cleanMatches} />
           )}
           {isLoaded &&
             hasMatches() &&
@@ -93,8 +97,8 @@ export const Summoner = () => {
             ))}
           <div className="level">
             <div className="level-item">
-              <button className="button" onClick={loadMore}>
-                {loaded ? 'Load More' : "Loading..."}
+              <button className={loaded ? 'button my-3':'button my-3 is-info is-loading'} onClick={loadMore}>
+                Load More
               </button>
             </div>
           </div>
@@ -105,7 +109,8 @@ export const Summoner = () => {
             champion={champion}
             setChampion={setChampion}
             setSelectedTab={setSelectedTab}
-            data={data?.matches} />
+            data={data?.matches}
+            cleanMatches={cleanMatches} />
         </div>
       </div>
     </>

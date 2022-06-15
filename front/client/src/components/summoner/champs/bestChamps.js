@@ -37,7 +37,6 @@ export const BestChamps = (props) => {
   const memoSetChamps = useCallback(setChamps,[setChamps])
 
   useEffect(() => {
-    console.log('Order effect ran')
     const compare = (a,b) => {
       const aKda = (parseFloat(a.kills)+parseFloat(a.assists))/parseFloat(a.deaths)
       const bKda = (parseFloat(b.kills)+parseFloat(b.assists))/parseFloat(b.deaths)
@@ -83,6 +82,7 @@ export const BestChamps = (props) => {
                 onClick={() => {
                               props.setChampion(() => ({activated:true,champion:champ}))
                               props.setSelectedTab(() => state.queue)
+                              props.cleanMatches()
                               }}>
             <ChampCard champ={champ} key={champ.name} />
           </div>

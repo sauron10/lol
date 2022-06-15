@@ -1,7 +1,6 @@
 import { useReducer } from "react"
 import axios from "axios"
 import { vars } from "../../page-assets/route"
-
 const ACTIONS = {
   SET_USERNAME: 1,
   SET_PASSWORD: 2,
@@ -48,7 +47,6 @@ export const LoginModal = (props) => {
         sameSite: 'lax',
         path: '/'
       }
-      console.log(res)
       if (res.data.status === 200) {
         props.setLoginOpened(prevLog => !prevLog)
         props.setCookie('username', res.data?.username, cookieOpt)

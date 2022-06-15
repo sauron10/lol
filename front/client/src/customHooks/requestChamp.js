@@ -1,17 +1,16 @@
-import { useState, useEffect} from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 import { vars } from "../page-assets/route";
+import Cookies from "js-cookie";
 
 export const useGetChamps = (summonerName, queue) => {
 
-  const [champs , setChamps,] = useState([])
+  const [champs, setChamps,] = useState([])
 
   useEffect(() => {
     const getChamps = async () => {
       try {
-        console.log('Champ effect ran')
-        const champs = await axios.get(`${vars.route}/${summonerName}/champion/rank?queue=${queue}`)
-        // console.log(champs)
+        const champs = await axios.get(`${vars.route}/summoner/${summonerName}/champion/rank?queue=${queue}&username=${Cookies.get('username')}&token=${Cookies.get('authToken')}`)
         return champs
       } catch (e) {
         console.log('Error getting champs: ', e)
@@ -24,6 +23,5 @@ export const useGetChamps = (summonerName, queue) => {
 
   }, [summonerName, queue])
 
-  // console.log(champs)
   return [champs, setChamps]
 }

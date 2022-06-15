@@ -7,7 +7,8 @@ const ACTIONS = {
   'SET_EMAIL': 2,
   'SET_PASSWORD': 3,
   'SET_RE_PASSWORD': 4,
-  'SUCCESS' : 5
+  'SUCCESS' : 5,
+  'ERROR' : 6
 }
 
 const init = () => ({
@@ -32,6 +33,9 @@ const reducer = (state, action) => {
       action.payload.setModalOpened(prevMod => !prevMod)
       action.payload.setSuccess(prevSucc => !prevSucc)
       return state
+    case ACTIONS.ERROR:
+      return ({...state,error: action.payload})
+    
 
     default:
       return state
@@ -89,19 +93,24 @@ export const AuthenticationModal = (props) => {
   const handleSubmit = async(e) => {
     e.preventDefault()
     try{
-      const res  = await axios.post(`${vars.route}/signup`,{
+      const res  = await axios.post(`${vars.route}/signup/`,{
         username : state.username,
         email : state.email,
         password : state.password
-      })
+      },vars.axiosConf)
       const cookieOpt = {
         expires : 60*60,
         sameSite : 'lax',
         path:'/'
       }
-      if(res.data.status === 'ok') dispatch({type:ACTIONS.SUCCESS, payload:{setModalOpened:props.setModalOpened, setSuccess:props.setSuccess}})
-      props.setCookie('username', res.data?.username,cookieOpt)
-      props.setCookie('authToken', res.data?.token,cookieOpt)
+      console.log(res)
+      if(res.status === 200) {
+        dispatch({type:ACTIONS.SUCCESS, payload:{setModalOpened:props.setModalOpened, setSuccess:props.setSuccess}})
+        props.setCookie('username', res.data?.username,cookieOpt)
+        props.setCookie('authToken', res.data?.token,cookieOpt)
+      }else{
+        dispatch({type:ACTIONS.ERROR, payload:res.data.error})
+      }
       return res
     }catch(e){
       console.log('Error sending user info')
@@ -177,6 +186,7 @@ export const AuthenticationModal = (props) => {
               {!isOfLength(state.rePassword, 128) && <p className="alert">The max length is 128 characters</p>}
               {!samePasswords() && <p className="alert">Passwords don't match</p>}
             </div>
+            {state.error && <p className="alert">{state.error}</p>}
             {formIsOk() && <input className="button is-success" type='submit' value='Save'/>}
             <button className="button" onClick={() => props.setModalOpened(prevMod => !prevMod)}>Cancel</button>
           </form>

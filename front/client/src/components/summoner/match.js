@@ -28,9 +28,13 @@ export const Match = (props) => {
   }
   useEffect(() => {
     const manageDate = () => {
+      const zero = (n) => {
+        return String(n).padStart(2,'0')
+      }
+
       const dateObj = new Date(props.summoner.game_creation)
       const dateNow = new Date()
-      setDate(dateObj.toDateString() === dateNow.toDateString() ? `${dateObj.getHours()}:${dateObj.getMinutes()}:${dateObj.getSeconds()}` : dateObj.toDateString())
+      setDate(dateObj.toDateString() === dateNow.toDateString() ? `${zero(dateObj.getHours())}:${zero(dateObj.getMinutes())}:${zero(dateObj.getSeconds())}` : dateObj.toDateString())
     }
 
     manageDate()
@@ -133,7 +137,7 @@ export const Match = (props) => {
           {(isInsideRange(5000, 1484) || isInsideRange(769, 600)) && <div className="column">
             <div className="columns is-multiline is-gapless has-text-light is-mobile">
               {pair(props.summoner.players).map((playerPair) => (
-                <Player playerPair={playerPair} key={playerPair[0].id + playerPair[0].current_summoner_name} />
+                <Player playerPair={playerPair} key={playerPair[0].participant + playerPair[0].current_summoner_name} />
               ))}
             </div>
           </div>}
@@ -151,7 +155,7 @@ export const Match = (props) => {
                     game_duration: props.summoner.game_duration,
                     ...player,
                   }}
-                  key={player.id + player.current_summoner_name}
+                  key={player.participant + player.current_summoner_name}
                 />
               ))}
             </tbody>

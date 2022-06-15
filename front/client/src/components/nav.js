@@ -36,15 +36,22 @@ const Nav = (props) => {
         if(res.data?.status === 200) toggleAuthentication()
       })
     }
-    console.log('Nav effect ran')
     
   },[authenticated,toggleAuthentication])
 
   const navigate = useNavigate();
 
   const logOut = () => {
-    Cookies.remove('username')
-    Cookies.remove('authToken')
+    Cookies.remove('username',{
+      expires: 60 * 60,
+      sameSite: 'lax',
+      path: '/'
+    })
+    Cookies.remove('authToken',{
+      expires: 60 * 60,
+      sameSite: 'lax',
+      path: '/'
+    })
     toggleAuthentication()  
     if (props.page !== 'home') navigate('/')
     
@@ -88,7 +95,7 @@ const Nav = (props) => {
                 </div>
               </form>}
               {/* <p>{loaded.current}</p> */}
-              {  !authenticated &&(
+              { vars.route!=='' && !authenticated &&(
                 <button className="button main-color"
                   onClick={() => {
                     setModalOpened(prevMod => !prevMod)
