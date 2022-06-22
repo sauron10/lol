@@ -13,6 +13,7 @@ import { LoginModal } from "./authentication/loginModal";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { vars } from "../page-assets/route";
+import { useWindowDimensions } from "../customHooks/window";
 
 
 const Nav = (props) => {
@@ -22,6 +23,7 @@ const Nav = (props) => {
   const [loginOpened, setLoginOpened] = useState(false)
   const [success, setSuccess] = useState(false)
   const [search, setSearch] = useState('')
+  const {width} = useWindowDimensions()
 
   useEffect(() => {
     const axiosCall = async () => {
@@ -84,7 +86,7 @@ const Nav = (props) => {
         </div>
       </div>
       {/* Search */}
-      <div className="column is-narrow p-0 mr-4">
+      <div className={"column is-narrow p-0 mr-4" + width >= 375 ? '':'small-input'}>
         {props.page !== 'home' &&
           <form className="form" onSubmit={handleSubmit}>
             <div className="field navbar-input has-addons">

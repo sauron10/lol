@@ -62,9 +62,11 @@ export const ExpandedMatchTable = (props) => {
           </div>
         </td>
         <td>
-          <div className="columns is-gapless is-mobile is-multiline">
+          <div className="columns is-gapless is-mobile is-multiline item-column">
             {props.player.items.map((item) => (
-              <Item item={item} key={item.id} />
+              <div className="column is-one-quarter" key={item.id}>
+                <Item item={item} key={item.id} />
+              </div>
             ))}
           </div>
         </td>

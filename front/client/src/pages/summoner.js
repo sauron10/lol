@@ -14,7 +14,7 @@ import { PlayedWith } from "../components/summoner/played/playedWith";
 
 export const Summoner = () => {
   // const authenticated = useAuthentication();
-  const [data, updateData, loaded, updateProfileData, getSeasonMatches,cleanMatches,getWastedTime] = useGetSummoner(
+  const [data, updateData, loaded, updateProfileData, getSeasonMatches, cleanMatches, getWastedTime] = useGetSummoner(
     useParams().summonerName
   );
   // const loadedPage = useRef(false)
@@ -22,19 +22,18 @@ export const Summoner = () => {
   const [selectedTab, setSelectedTab] = useState(1);
   const [champion, setChampion] = useState({ activated: false, champion: {} })
   const { width } = useWindowDimensions()
+  const [name,setName] = useState(useParams().summonerName)
 
 
   useEffect(() => {
     setIndex(() => 10)
-  }, [champion,selectedTab,data?.summoner_name])
+  }, [champion, selectedTab, data?.summoner_name])
 
   useEffect(() => {
     const matchList = data?.matches?.map(match => match?.match_id) ?? []
 
-    updateData(index, selectedTab, champion.champion.id,matchList);
+    updateData(index, selectedTab, champion.champion.id, matchList);
   }, [index, updateData, selectedTab, champion])
-
-
 
   const loadMore = () => {
     // console.log(selectedTab);
@@ -60,15 +59,15 @@ export const Summoner = () => {
   return (
     <>
       <Nav page={'summoner'} />
-      <div className="columns is-centered ">
+      <div className='columns is-centered ' style={{ maxWidth: width }}>
         {/* First column */}
-        <div className="column is-narrow pl-6 pr-4 mt-5">
+        <div className="column is-narrow p-0 m-5">
           {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} getWastedTime={getWastedTime} />}
           <PlayedWith summoner={useParams().summonerName} queue={selectedTab} />
         </div>
         {/* {width < 500 && isLoaded && <MobileSummonerCard summoner={data} loaded={loaded} />} */}
         {/* Second column */}
-        <div className="column mt-5">
+        <div className="column p-0 m-5">
           <div className="px-6">
             <div className="columns">
               <div className="column">
@@ -85,33 +84,35 @@ export const Summoner = () => {
           {isLoaded && (
             <MatchFilter setSelectedTab={setSelectedTab} selectedTab={selectedTab} setIndex={setIndex} cleanMatches={cleanMatches} />
           )}
-          {isLoaded &&
-            hasMatches() &&
-            data.matches.map((match) => (
-              <Match
-                summoner={match}
-                key={`${match.match_id}`}
-                position={width}
-                loaded={loaded}
-              />
-            ))}
+
+            {isLoaded &&
+              hasMatches() &&
+              data.matches.map((match) => (
+                <Match
+                  summoner={match}
+                  key={`${match.match_id}`}
+                  position={width}
+                  loaded={loaded}
+                />
+              ))}
+
           <div className="level">
             <div className="level-item">
-              <button className={loaded ? 'button my-3':'button my-3 is-info is-loading'} onClick={loadMore}>
+              <button className={loaded ? 'button my-3' : 'button my-3 is-info is-loading'} onClick={loadMore}>
                 Load More
               </button>
             </div>
           </div>
         </div>
         {/* Third column */}
-        <div className="column is-narrow pr-5">
-          <BestChamps summoner={useParams().summonerName}
+        {(width > 1100 || width < 450) && <div className="column is-narrow p-0 m-5">
+          <BestChamps summoner={name}
             champion={champion}
             setChampion={setChampion}
             setSelectedTab={setSelectedTab}
             data={data?.matches}
             cleanMatches={cleanMatches} />
-        </div>
+        </div>}
       </div>
     </>
   );
