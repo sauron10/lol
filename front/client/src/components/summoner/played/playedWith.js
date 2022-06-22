@@ -7,7 +7,7 @@ export const PlayedWith = (props) => {
 
   return (
     <>
-      <div className="played-with">
+      <div className="played-with has-text-centered">
         <div className="table-container">
           <table className="table is-narrow is-hoverable my-5">
             <thead>

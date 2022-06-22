@@ -62,11 +62,11 @@ export const Summoner = () => {
       <Nav page={'summoner'} />
       <div className="columns is-centered ">
         {/* First column */}
-        <div className="column is-narrow pl-6 pr-4 mt-5 is-hidden-mobile">
+        <div className="column is-narrow pl-6 pr-4 mt-5">
           {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} getWastedTime={getWastedTime} />}
           <PlayedWith summoner={useParams().summonerName} queue={selectedTab} />
         </div>
-        {width < 500 && isLoaded && <MobileSummonerCard summoner={data} loaded={loaded} />}
+        {/* {width < 500 && isLoaded && <MobileSummonerCard summoner={data} loaded={loaded} />} */}
         {/* Second column */}
         <div className="column mt-5">
           <div className="px-6">

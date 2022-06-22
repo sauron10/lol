@@ -16,7 +16,8 @@ const App = () => {
         <BrowserRouter>
           <Routes>
             <Route path='/' element={<Home />} />
-            <Route path='/summoner/:summonerName' element={<Auth />} />
+            <Route path='/summoner/:summonerName' element={<Auth page={'summoner'} />} />
+            <Route path='/champions/' element={<Auth page={'champions'}/>}/>
           </Routes>
         </BrowserRouter>
       </div>

@@ -122,7 +122,7 @@ const getMatches = async (summonerName, start, number, queue = '', champion) => 
   const players = sqlTools.nestQuery(`
   SELECT kills,deaths,assists,minions_killed,
   gold_earned,total_damage_dealt_champs,
-  current_summoner_name,team,c.name,c.image,participant,
+  current_summoner_name,team,c.name,c.image,participant,win,
   ${summoners} as summoners,
   ${runes} as runes,
   ${items} as items

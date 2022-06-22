@@ -5,16 +5,18 @@ const cors = require('cors')
 const app = express()
 app.use(cors())
 
-const authentication = require('./logic/modules/authentication')
+const {authenticate} = require('./logic/modules/authentication')
 
 const ladderRouter = require('./routes/ladder')
 const generalRouter = require('./routes/general')
+const statsRouter = require('./routes/stats')
 
 
 app.use(express.json())
-app.use(authentication.authenticate)
+app.use(authenticate)
 app.use(ladderRouter)
 app.use(generalRouter)
+app.use(statsRouter)
 
 
 

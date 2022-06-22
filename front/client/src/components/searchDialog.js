@@ -8,11 +8,8 @@ const Search = () => {
 
   const handleClick = (e) => {
     e.preventDefault();
-    // console.log("handle click");
     try {
-      // console.log(summonerName)
       navigate(`/summoner/${summonerName}`);
-      // window.location.reload();
     } catch (e) {
       console.log(e);
     }
@@ -20,13 +17,13 @@ const Search = () => {
 
   return (
     <div className="level">
-      <div className="level-item has-text-centered">
-        <form onSubmit={handleClick}>
+      <div className="level-item">
+        <form onSubmit={handleClick} className='searchbox-form'>
           <div id="searchBoxContainer" className="container">
-            <div className="field has-addons is-centered">
-              <div className="control">
+            <div className="field has-addons has-addons-centered ">
+              <div className="control searchbox-control">
                 <input
-                  className="input is-half-desktop"
+                  className="input is-large is-rounded has-text-centered"
                   type="text"
                   placeholder="Summoner Name"
                   onChange={(e) => setSummonerName(e.target.value)}
@@ -34,7 +31,7 @@ const Search = () => {
               </div>
               <div className="control">
                 <input
-                  className="button is-primary is-centered"
+                  className="button is-primary is-large is-rounded"
                   type="submit"
                   value='Search'
                 />

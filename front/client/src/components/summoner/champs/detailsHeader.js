@@ -14,16 +14,16 @@ export const DetailsHeader = (props) => {
         victoryData: [
           { x: 1, y: parseInt(props.champion.wins), label: `W: ${props.champion.wins}` },
           { x: 2, y: parseInt(props.champion.losses), label: `L: ${props.champion.losses}` }
-        ],      
+        ],
         kaData: [],
         dData: [],
         csData: []
       }
 
       props?.data.map((match, index, arr) => {
-        obj.kaData = [...obj['kaData'], { x:arr.length - index, y: parseInt(match.kills) + parseInt(match.assists), l: 'kills' }]
-        obj.dData = [...obj['dData'], { x:arr.length - index, y: parseInt(match.deaths), l: 'deaths' }]
-        obj.csData = [...obj['csData'], { x:arr.length - index, y: match.minions_killed, }]
+        obj.kaData = [...obj['kaData'], { x: arr.length - index, y: parseInt(match.kills) + parseInt(match.assists), l: 'kills' }]
+        obj.dData = [...obj['dData'], { x: arr.length - index, y: parseInt(match.deaths), l: 'deaths' }]
+        obj.csData = [...obj['csData'], { x: arr.length - index, y: match.minions_killed, }]
         return match
       })
       return obj
@@ -34,9 +34,9 @@ export const DetailsHeader = (props) => {
     <>
       <div className="columns mr-4">
         <div className="column is-narrow">
-          <ChampionImage image={props.champion.image} size={'is-64x64'} />
-        </div>
-        <div className="column is-narrow">
+          <div className="has-text-centered">
+            <ChampionImage image={props.champion.image} size={'is-96x96'} />
+          </div>
           <div className="chart-container">
             <GamesChart victoryData={dataLists.victoryData} />
           </div>
