@@ -8,7 +8,7 @@ export const ChampCard = (props) => {
         <ChampionImage image={props.champ.image} size={'is-48x48'}/>
       </div>
       {/* Kills */}
-      <div className="column p-0 kill-column">
+      <div className="column px-0 kill-column">
         <p className="is-size-7">{`${props.champ.kills}/${props.champ.deaths}/${props.champ.assists}`}</p>
         <p>{((parseFloat(props.champ.kills) + parseFloat(props.champ.assists))/ parseFloat(props.champ.deaths)).toFixed(1)}</p>
       </div>

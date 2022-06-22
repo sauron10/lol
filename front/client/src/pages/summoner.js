@@ -12,7 +12,7 @@ import { BestChamps } from "../components/summoner/champs/bestChamps";
 // import { useAuthentication } from "../components/authenticationContext";
 import { PlayedWith } from "../components/summoner/played/playedWith";
 
-export const Summoner = () => {
+export const Summoner = (props) => {
   // const authenticated = useAuthentication();
   const [data, updateData, loaded, updateProfileData, getSeasonMatches, cleanMatches, getWastedTime] = useGetSummoner(
     useParams().summonerName
@@ -22,7 +22,7 @@ export const Summoner = () => {
   const [selectedTab, setSelectedTab] = useState(1);
   const [champion, setChampion] = useState({ activated: false, champion: {} })
   const { width } = useWindowDimensions()
-  const [name,setName] = useState(useParams().summonerName)
+  const {summoner} = props.summoner()
 
 
   useEffect(() => {
@@ -106,7 +106,7 @@ export const Summoner = () => {
         </div>
         {/* Third column */}
         {(width > 1100 || width < 450) && <div className="column is-narrow p-0 m-5">
-          <BestChamps summoner={name}
+          <BestChamps summoner={summoner}
             champion={champion}
             setChampion={setChampion}
             setSelectedTab={setSelectedTab}

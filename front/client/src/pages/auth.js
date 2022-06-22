@@ -10,7 +10,7 @@ export const Auth = (props) => {
     if(!authenticated) return <AuthenticateComp/>
     switch (props.page){
       case 'summoner':
-        return <Summoner/>
+        return <Summoner summoner={props.summoner}/>
       case 'champions':
         return <Champions/>
       default:
