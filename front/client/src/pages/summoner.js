@@ -4,7 +4,7 @@ import SummonerCard from "../components/summoner/summonerCard";
 import { useGetSummoner } from "../customHooks/requestSummoner";
 import { Achievement } from "../components/summoner/achievementsCard";
 import { Match } from "../components/summoner/match";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { MatchFilter } from "../components/summoner/matchFilter";
 import { useWindowDimensions } from "../customHooks/window";
 import { MobileSummonerCard } from "../components/summoner/mobileSummonerCard";
@@ -23,6 +23,8 @@ export const Summoner = (props) => {
   const [champion, setChampion] = useState({ activated: false, champion: {} })
   const { width } = useWindowDimensions()
   const {summoner} = props.summoner()
+  const matchList = useMemo(() => data?.matches?.map(match => match?.match_id) ?? [],[data])
+
 
 
   useEffect(() => {
@@ -30,7 +32,7 @@ export const Summoner = (props) => {
   }, [champion, selectedTab, data?.summoner_name])
 
   useEffect(() => {
-    const matchList = data?.matches?.map(match => match?.match_id) ?? []
+    // const matchList = data?.matches?.map(match => match?.match_id) ?? []
 
     updateData(index, selectedTab, champion.champion.id, matchList);
   }, [index, updateData, selectedTab, champion])
@@ -105,7 +107,7 @@ export const Summoner = (props) => {
           </div>
         </div>
         {/* Third column */}
-        {(width > 1100 || width < 450) && <div className="column is-narrow p-0 m-5">
+        {(width > 1100 || width < 770) && <div className="column is-narrow p-0 m-5">
           <BestChamps summoner={summoner}
             champion={champion}
             setChampion={setChampion}

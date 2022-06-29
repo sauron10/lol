@@ -1,5 +1,5 @@
 import Nav from '../components/nav'
-// import { useAuthentication} from '../components/authenticationContext';
+import { ChampionsList } from '../components/champions/championList'
 
 const Champions = () => {
   // const authenticated = useAuthentication()
@@ -8,7 +8,7 @@ const Champions = () => {
     <>
       <Nav page={'champions'} />
       <div>
-        <p>Champions</p>
+        <ChampionsList/>
       </div>
     </>
   )

@@ -135,7 +135,7 @@ export const Match = (props) => {
             <p>{getKillPart()}%</p>
           </div>}
           {/* Players */}
-          {(isInsideRange(5000, 1484) || isInsideRange(769, 600)) && <div className="column">
+          {(isInsideRange(5000, 1405) || isInsideRange(770, 660) || isInsideRange(1100,1020)) && <div className="column">
             <div className="columns is-multiline is-gapless has-text-light is-mobile">
               {pair(props.summoner.players).map((playerPair) => (
                 <Player playerPair={playerPair} key={playerPair[0].participant + playerPair[0].current_summoner_name} />

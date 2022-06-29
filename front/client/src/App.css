@@ -13,6 +13,7 @@ body{
 
 .navbar-input {
   max-width: 300px;
+  margin: auto;
 }
 
 .main-color{
@@ -89,7 +90,7 @@ tr, td{
   border-radius: 10px;
 }
 
-td {
+td,th {
   vertical-align: middle !important;
 }
 tr:nth-child(odd) {background-color: rgb(142, 204, 245);}
@@ -188,4 +189,9 @@ a:link,a:visited{
 
 .mob-column{
   width: 375px;
+}
+
+.champion-filters{
+  /* margin: auto; */
+  /* max-width: 800px; */
 }

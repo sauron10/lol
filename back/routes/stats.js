@@ -3,6 +3,7 @@ const router = express.Router()
 const intStatsChamp = require('../database/interface/stats/championStats')
 const intStatsItem = require('../database/interface/stats/itemStats')
 const intStatsSummoner = require('../database/interface/stats/summonerStats')
+const intStatsGame = require('../database/interface/stats/versions')
  
 
 // Champions
@@ -53,6 +54,18 @@ router.get('/patch/winrate/:summoner/', async (req, res, next) => {
   const {summoner} = req.params
   const {queue} = req.query
   const result = await intStatsSummoner.summonerWinrateByPatch(summoner,queue)
+  return res.json(result)
+})
+
+
+//Games
+router.get('/game/versions/',async(req,res,next) => {
+  const result = await intStatsGame.versionList()
+  return res.json(result)
+})
+
+router.get('/game/queues/',async(req,res,next) => {
+  const result = await intStatsGame.queueList()
   return res.json(result)
 })
 
