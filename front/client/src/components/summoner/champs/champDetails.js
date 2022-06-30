@@ -9,8 +9,7 @@ export const ChampionDetails = (props) => {
         <FontAwesomeIcon icon={faAngleLeft}
           size={'3x'}
           color={'white'}
-          onClick={() => props.setChampion(() =>
-            ({ activated: false, champion: {} }))}
+          onClick={() => props.dispatch({type:props.ACTIONS.restore})}
         />
       </div>
       <DetailsHeader champion={props.champion} data={props.data} />

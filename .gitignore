@@ -4,5 +4,7 @@ back/node_modules
 front/client/public/img
 front/client/public/perk-images
 front/client/public/ranked-emblems
+front/client/public/champion
 back/.env
 front/client/build/
+

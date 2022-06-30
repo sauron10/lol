@@ -1,4 +1,5 @@
 const db = require('../../index')
+const sqlTools = require('../../sql_helper')
 
 const championsByWinrate = async (queue, version) => {
   try {
@@ -62,6 +63,35 @@ const championsByWinrate = async (queue, version) => {
   }
 }
 
+const championInfo = async (champion) => {
+  try{
+    const tags = sqlTools.nestQuery(`
+    select tag
+    from champion_tags ct
+    join champion_tags_interm cti on cti.champion_tag_id = ct.id
+    where c.id = cti.champion_id
+    `)
+
+    const skins = sqlTools.nestQuery(`
+    select * 
+    from champion_skins cs
+    where cs.champion_id = c.id
+    `)
+
+    const res = await db.query(`
+    select *,
+    ${skins} as skins,
+    ${tags} as tags
+    from champion c
+    where lower(c.name) = lower($1)
+    `,[champion])
+    return res.rows
+  }catch(e){
+    console.log('Error getting the champion information: ',e)
+    return []
+  }
+}
+
 const summonerChampionBestWinrate = async (champion, queue) => {
   try {
     const res = await db.query(`
@@ -99,10 +129,10 @@ const championWinrateByPatch = async (champion, queue) => {
       join champion_ms cm on cm.match_summoner_id = ms.id 
       join champion c on c.id = cm.champion_id
       join match m on m.id = ms.match_id
-        where lower(c.name) = $1 and m.queue_id = $2
+        where lower(c.name) = lower($1) and m.queue_id = $2
         group by game_version
         having count(*) > 20
-        order by wr desc
+        order by game_version desc
     `, [champion, queue])
     return res.rows
 
@@ -136,7 +166,7 @@ const commonLaneForChampion = async (champion, version) => {
 const championVsChampionWinrate = async (champion, position, queue) => {
   try {
     const res = await db.query(`
-    select c.name,
+    select c.name,c.image,
     count(*) as matches,
     count(*) filter(where ms.win = true) as wins,
     cast((count(*) filter(where ms.win = true)*100.0/count(*))as decimal(5,2) ) as winrate
@@ -149,7 +179,7 @@ const championVsChampionWinrate = async (champion, position, queue) => {
           join champion c on c.id = cm.champion_id
           join match m on ms.match_id = m.id
             where lower(c."name") = lower($1) and m.queue_id = $3) and lower(ms.individual_position) = lower($2) and lower(c.name) != lower($1) 
-            group by c.name,ms.individual_position
+            group by c.name,c.image,ms.individual_position
             having count(*) > 20
             order by winrate desc    
     `, [champion, position, queue])
@@ -169,5 +199,6 @@ module.exports = {
   summonerChampionBestWinrate,
   championWinrateByPatch,
   commonLaneForChampion,
-  championVsChampionWinrate
+  championVsChampionWinrate,
+  championInfo
 }

@@ -189,13 +189,27 @@ const getProfile = async (summonerName) => {
     `)
 
 
-    const leagues = sqlTools.nestQuery(`
+    const solo = sqlTools.nestQuery(`
       SELECT sl.tier,rank,league_points,wins,losses,date,queue_type
       FROM summoner_league sl
       JOIN league l on l.id = sl.league_id
-      WHERE sl.summoner_id = s.id
-      ORDER BY sl.date   
+      WHERE sl.summoner_id = s.id and queue_type like '%SOLO%'
+      ORDER BY sl.date desc 
     `)
+
+    const flex = sqlTools.nestQuery(`
+      SELECT sl.tier,rank,league_points,wins,losses,date,queue_type
+      FROM summoner_league sl
+      JOIN league l on l.id = sl.league_id
+      WHERE sl.summoner_id = s.id and queue_type like '%FLEX%'
+      ORDER BY sl.date desc
+    `)
+
+    const leagues = sqlTools.nestQuery(`
+      SELECT 
+      ${solo} as solo,
+      ${flex} as flex
+    `)    
 
     const response = await db.query(`
       SELECT summoner_name,summoner_level,

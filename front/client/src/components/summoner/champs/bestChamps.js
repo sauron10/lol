@@ -57,7 +57,7 @@ export const BestChamps = (props) => {
     }
   }, [state.order, state.queue, memoSetChamps])
 
-  return !props.champion.activated ? (
+  return !props.state.champion.activated ? (
     <>
       <div className="tabs is-centered">
         <ul>
@@ -82,9 +82,9 @@ export const BestChamps = (props) => {
         {champs.length > 0 && champs?.map(champ => (
           <div key={champ.name}
             onClick={() => {
-              props.setChampion(() => ({ activated: true, champion: champ }))
-              props.setSelectedTab(() => state.queue)
-              props.cleanMatches()
+              props.dispatch({type:props.ACTIONS.openChampionCard,payload:{champion:{activated:true,champion:champ},tab:state.queue,index:20}})
+              // props.setSelectedTab(() => state.queue)
+              // props.cleanMatches()
             }}>
             <ChampCard champ={champ} key={champ.name} />
           </div>
@@ -92,6 +92,6 @@ export const BestChamps = (props) => {
       </div>
 
     </>
-  ) : <ChampionDetails setChampion={props.setChampion} champion={props.champion.champion} data={props.data} />
+  ) : <ChampionDetails dispatch={props.dispatch} ACTIONS={props.ACTIONS} champion={props.state.champion.champion} data={props.data}/>
 
 }

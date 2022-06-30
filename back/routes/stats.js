@@ -14,9 +14,16 @@ router.get('/champions/winrate/', async (req, res, next) => {
 })
 
 router.get('/champions/best/:champion/', async (req, res, next) => {
-  const {queue,version} = req.query 
+  const {queue} = req.query 
   const {champion} = req.params
   const result = await intStatsChamp.summonerChampionBestWinrate(champion,queue)
+  return res.json(result)
+})
+
+router.get('/champions/winrate/:champion/', async (req, res, next) => {
+  const {queue} = req.query 
+  const {champion} = req.params
+  const result = await intStatsChamp.championWinrateByPatch(champion,queue)
   return res.json(result)
 })
 
@@ -31,6 +38,13 @@ router.get('/champions/against/:champion/', async (req, res, next) => {
   const {champion} = req.params
   const {position,queue} = req.query
   const result = await intStatsChamp.championVsChampionWinrate(champion,position,queue)
+  return res.json(result)
+})
+
+router.get('/champions/info/:champion/', async (req, res, next) => {
+  const {champion} = req.params
+  const [result] = await intStatsChamp.championInfo(champion)
+  // console.log(result)
   return res.json(result)
 })
 

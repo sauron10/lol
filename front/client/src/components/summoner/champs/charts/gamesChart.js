@@ -2,17 +2,19 @@ import { VictoryPie } from "victory"
 
 export const GamesChart = (props) => {
   return (
-    <VictoryPie animate={{ duration: 500, onLoad: { duration: 500 } }}
-      colorScale={['green', 'red']}
-      innerRadius={130}
-      cornerRadius={50}
+    <VictoryPie
+      colorScale={['purple', 'blue', 'red']}
+      innerRadius={135}
+      cornerRadius={70}
       data={props.victoryData}
-      labelRadius={30}
-      padAngle={5}
+      labelRadius={160}
+      labelPlacement = {'perpendicular'}
+      
+      padAngle={1}
       style={{
         labels: {
           fill: 'white',
-          fontSize: 30
+          fontSize: 25
         }
       }}
     />

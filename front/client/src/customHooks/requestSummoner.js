@@ -8,6 +8,7 @@ export const useGetSummoner = summonerName => {
 
   const [data, setData] = useState(null)
   const [loaded, setLoaded] = useState(false)
+  const [time,setTime] = useState(0)
 
 
   const updateData = useCallback(async (num, queue, champion = '', matchList) => {
@@ -49,7 +50,7 @@ export const useGetSummoner = summonerName => {
     }
   }
 
-  const getWastedTime = async () => {
+  const getWastedTime = (async () => {
     try {
       const res = await axios.post(`${vars.route}/summoner/${summonerName}`,
         {
@@ -59,18 +60,18 @@ export const useGetSummoner = summonerName => {
           token: Cookies.get('authToken')
 
         })
-      console.log(res.data.wasted_time)
-      return res.data.wasted_time
+      // console.log(res.data.wasted_time)
+      setTime(() => res.data.wasted_time)
+      // return res.data.wasted_time
     } catch (e) {
       console.log('Wasted Time error')
     }
-  }
+  })()
 
   const updateProfileData = async (selectedTab) => {
     try {
       setLoaded(false)
       const res = await axios.get(`${vars.route}/summoner/${summonerName}/update/?queue=${selectedTab}&username=${Cookies.get('username')}&token=${Cookies.get('authToken')}`)
-      // console.log(res.data)
       res.status === 200 && setData(res.data)
     } catch (e) {
       console.log('Error updating Profile Data')
@@ -114,6 +115,5 @@ export const useGetSummoner = summonerName => {
   }, [summonerName]);
 
   // useEffect(useCallback(() => getData,[]),[])
-
-  return [data, updateData, loaded, updateProfileData, getSeasonMatches, cleanMatches, getWastedTime]
+  return [data, updateData, loaded, updateProfileData, getSeasonMatches, cleanMatches, time]
 }

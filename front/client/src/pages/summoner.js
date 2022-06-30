@@ -1,50 +1,72 @@
 import Nav from "../components/nav";
-import { useParams } from "react-router-dom";
 import SummonerCard from "../components/summoner/summonerCard";
 import { useGetSummoner } from "../customHooks/requestSummoner";
 import { Achievement } from "../components/summoner/achievementsCard";
 import { Match } from "../components/summoner/match";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {useEffect, useMemo, useReducer} from "react";
 import { MatchFilter } from "../components/summoner/matchFilter";
 import { useWindowDimensions } from "../customHooks/window";
-import { MobileSummonerCard } from "../components/summoner/mobileSummonerCard";
 import { BestChamps } from "../components/summoner/champs/bestChamps";
-// import { useAuthentication } from "../components/authenticationContext";
 import { PlayedWith } from "../components/summoner/played/playedWith";
 
+const ACTIONS = {
+  restore: 1,
+  changeIndex: 2,
+  changeTab: 3,
+  changeChampion: 4,
+  openChampionCard:5,
+  changeMatchTab:6
+
+}
+
+
 export const Summoner = (props) => {
-  // const authenticated = useAuthentication();
-  const [data, updateData, loaded, updateProfileData, getSeasonMatches, cleanMatches, getWastedTime] = useGetSummoner(
-    useParams().summonerName
+  
+  const reducer = (state, action) => {
+    switch (action.type) {
+      case ACTIONS.restore:
+        cleanMatches()
+        return { index: 20, tab: 1, champion: { activated: false, champion: {} } }
+      case ACTIONS.changeIndex:
+        return { ...state, index: action.payload }
+      case ACTIONS.changeTab:
+        return { ...state, tab: action.payload }
+      case ACTIONS.changeChampion:
+        return { ...state, champion: action.payload }
+      case ACTIONS.openChampionCard:{
+        cleanMatches()
+        return action.payload
+        }
+      case ACTIONS.changeMatchTab:{
+        cleanMatches()
+        // const {tab,index} = action.payload
+        return {...action.payload,champion:{activated:false,champion:{}}}
+        }
+      default:
+        return state
+    }
+  }
+
+  const { summoner } = props.summoner()
+  const [data, updateData, loaded, updateProfileData, getSeasonMatches, cleanMatches, time] = useGetSummoner(
+    summoner
   );
-  // const loadedPage = useRef(false)
-  const [index, setIndex] = useState(10);
-  const [selectedTab, setSelectedTab] = useState(1);
-  const [champion, setChampion] = useState({ activated: false, champion: {} })
+
+  const [state, dispatch] = useReducer(reducer, { index: 20, tab: 1, champion: { activated: false, champion: {} } })
   const { width } = useWindowDimensions()
-  const {summoner} = props.summoner()
-  const matchList = useMemo(() => data?.matches?.map(match => match?.match_id) ?? [],[data])
-
-
+  const matchList = useMemo(() => data?.matches?.map(match => match?.match_id) ?? [], [data])
 
   useEffect(() => {
-    setIndex(() => 10)
-  }, [champion, selectedTab, data?.summoner_name])
-
-  useEffect(() => {
-    // const matchList = data?.matches?.map(match => match?.match_id) ?? []
-
-    updateData(index, selectedTab, champion.champion.id, matchList);
-  }, [index, updateData, selectedTab, champion])
+    updateData(state.index, state.tab, state.champion.champion.id, matchList);
+  }, [state,summoner])
 
   const loadMore = () => {
-    // console.log(selectedTab);
-    setIndex((prevIndex) => prevIndex + 10);
-
-  };
+    dispatch({type:ACTIONS.changeIndex,payload:state.index + 20})
+  }
 
   const updateProfile = () => {
-    updateProfileData(selectedTab)
+    dispatch({type:ACTIONS.changeIndex, payload:20})
+    updateProfileData(state.tab)
   }
 
   const isLoaded = data !== null;
@@ -64,8 +86,8 @@ export const Summoner = (props) => {
       <div className='columns is-centered ' style={{ maxWidth: width }}>
         {/* First column */}
         <div className="column is-narrow p-0 m-5">
-          {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} getWastedTime={getWastedTime} />}
-          <PlayedWith summoner={useParams().summonerName} queue={selectedTab} />
+          {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} time={time} />}
+          <PlayedWith summoner={summoner} queue={state.tab} />
         </div>
         {/* {width < 500 && isLoaded && <MobileSummonerCard summoner={data} loaded={loaded} />} */}
         {/* Second column */}
@@ -84,19 +106,19 @@ export const Summoner = (props) => {
             </div>
           </div>
           {isLoaded && (
-            <MatchFilter setSelectedTab={setSelectedTab} selectedTab={selectedTab} setIndex={setIndex} cleanMatches={cleanMatches} />
+            <MatchFilter state={state} dispatch={dispatch} ACTIONS={ACTIONS} />
           )}
 
-            {isLoaded &&
-              hasMatches() &&
-              data.matches.map((match) => (
-                <Match
-                  summoner={match}
-                  key={`${match.match_id}`}
-                  position={width}
-                  loaded={loaded}
-                />
-              ))}
+          {isLoaded &&
+            hasMatches() &&
+            data.matches.map((match) => (
+              <Match
+                summoner={match}
+                key={`${match.match_id}`}
+                position={width}
+                loaded={loaded}
+              />
+            ))}
 
           <div className="level">
             <div className="level-item">
@@ -108,12 +130,13 @@ export const Summoner = (props) => {
         </div>
         {/* Third column */}
         {(width > 1100 || width < 770) && <div className="column is-narrow p-0 m-5">
-          <BestChamps summoner={summoner}
-            champion={champion}
-            setChampion={setChampion}
-            setSelectedTab={setSelectedTab}
+          <BestChamps
+            summoner={summoner}
+            state={state}
+            dispatch={dispatch}
             data={data?.matches}
-            cleanMatches={cleanMatches} />
+            ACTIONS={ACTIONS}
+          />
         </div>}
       </div>
     </>

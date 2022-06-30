@@ -55,7 +55,7 @@ const orderBy = (arr, param) => {
 }
 
 export const ChampionsList = () => {
-  const [champions, versions, loaded, championByWinrate, matchVersions] = useChampionStats()
+  const {data:champions, versions, loaded, championByWinrate, matchVersions} = useChampionStats()
   const [state, dispatch] = useReducer(reducer, { queue: 420, version: '%', name: '', lane: 'ANY', order: 'winrate' })
   const orderedChampions = useMemo(() => {
     return orderBy(champions ?? [], state.order)

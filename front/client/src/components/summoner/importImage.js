@@ -23,7 +23,7 @@ export const ImageEmblem = (props) => {
         />
       </div>
       <div>
-        <p className="is-size-3">{props.emblem.rank}</p>
+        <p className="is-size-3">{props.emblem.rank} - {props.emblem.league_points}</p>
       </div>
       <div>
         <p className="">{`${props.emblem.wins}  /  ${props.emblem.losses} : ${(props.emblem.wins / (props.emblem.wins + props.emblem.losses)*100).toFixed(1)}%`}</p>

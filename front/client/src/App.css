@@ -151,6 +151,7 @@ a:link,a:visited{
 
 .chart-container{
   max-width: 300px;
+  margin: auto;
 }
 
 .alert{
@@ -166,9 +167,6 @@ a:link,a:visited{
   width: 275px;
 }
 
-.chart-container{
-  margin: auto;
-}
 
 .champion-details-img{
   margin: auto;
@@ -191,7 +189,21 @@ a:link,a:visited{
   width: 375px;
 }
 
-.champion-filters{
-  /* margin: auto; */
-  /* max-width: 800px; */
+
+.champion-card{
+  border-radius: 20px;
+}
+
+.champion-presentation{
+  max-width: 160px;
+}
+
+.card{
+  min-height: 250px;
+  background-color: #0F4C75 !important;
+}
+
+.champion-chart-container{
+  margin: auto;
+  max-width: 250px;
 }

@@ -15,6 +15,11 @@ const App = () => {
     return {summoner:summonerName}
   }
 
+  const useChampionName = () => {
+    const {champion} = useParams()
+    return {champion}
+  }
+
   return (
     <AuthenticationProvider>
       <div>
@@ -23,6 +28,7 @@ const App = () => {
             <Route path='/' element={<Home />} />
             <Route path='/summoner/:summonerName' element={<Auth page={'summoner'} summoner={useSummonerName} />} />
             <Route path='/champions/' element={<Auth page={'champions'}/>}/>
+            <Route path='/champions/:champion' element={<Auth page={'champion-details'} champion={useChampionName}/>} />
           </Routes>
         </BrowserRouter>
       </div>
