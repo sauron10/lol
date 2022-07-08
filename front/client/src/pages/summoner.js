@@ -86,6 +86,7 @@ export const Summoner = (props) => {
       <div className='columns is-centered ' style={width<1500 ?{ maxWidth: width }:{}}>
         {/* Padding */}
         {width>2000 ? <div className="column is-0 is-2-fullhd"></div>:<></>}
+        
         {/* First column */}
         <div className="column is-narrow p-0 m-5">
           {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} time={time} />}
