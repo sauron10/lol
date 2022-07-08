@@ -5,18 +5,20 @@ const addItem = async item => {
   try{
     const query = {
       text : `INSERT INTO items
-       VALUES ($1,$2,$3,$4,$5)
+       VALUES ($1,$2,$3,$4,$5,$6)
        ON CONFLICT (id) DO UPDATE
        SET item_name = EXCLUDED.item_name,
             description = EXCLUDED.description,
             plain_text = EXCLUDED.plain_text,
-            image = EXCLUDED.image`,
+            image = EXCLUDED.image,
+            required_ally = EXCLUDED.required_ally`,
       values : [
         item.id,
         item.name,
         item.description,
         item.plaintext,
-        item.image.full
+        item.image.full,
+        item.requiredAlly
       ]
     }
 

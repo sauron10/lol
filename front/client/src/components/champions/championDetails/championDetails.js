@@ -2,12 +2,15 @@ import { useEffect, useReducer } from "react"
 import { useChampionStats } from "../championReq"
 import { ChampionCard } from "./championCard"
 import { Matchups } from "./matchups"
+import { useNavigate } from "react-router-dom"
 
 const reducer = (state, action) => {
   switch (action.type) {
     case 'restore':
       const { name } = action.payload
       return { name }
+    case 'changeName':      
+      return {...state,name:action.payload}
     case 'changeBest':
       return { ...state, best: action.payload }
     case 'changeWinrate':
@@ -37,6 +40,7 @@ export const ChampionDetails = (props) => {
     championInfo(state.name).then(d => dispatch({ type: 'changeInfo', payload: d }))
   }, [championInfo, championVsChampion, commonLane, winrateByPatch, bestSummoners, state.name])
 
+  const nav = useNavigate()
 
 
   return (
@@ -47,7 +51,7 @@ export const ChampionDetails = (props) => {
       <hr/>
       <div className="my-5">
         <p className="title has-text-centered has-text-white">Best players</p>
-        <table className="table has-text-centered">
+        <table className="table has-text-centered background-table">
           <thead>
             <tr>
               <th>Name</th>
@@ -58,7 +62,7 @@ export const ChampionDetails = (props) => {
           <tbody>
             {state?.best?.map(player => (
               <tr key={player.summoner_name}>
-                <th>{player.summoner_name}</th>
+                <th className="clickable" onClick={() => nav(`/summoner/${player.summoner_name}`)}>{player.summoner_name}</th>
                 <td>{player.total}</td>
                 <td>{player.wr}%</td>
               </tr>
@@ -69,7 +73,7 @@ export const ChampionDetails = (props) => {
        <hr/>
        <div className="my-5">
         <p className="title has-text-centered has-text-white">Matchups</p>
-        <Matchups vs={state.vs}/>
+        <Matchups vs={state.vs} dispatch = {dispatch}/>
        </div>
     </>
   )

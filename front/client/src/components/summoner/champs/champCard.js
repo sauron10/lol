@@ -20,7 +20,7 @@ export const ChampCard = (props) => {
       {/* Minions */}
       <div className="column is-narrow">
         {/* <p className="is-size-7">minions</p> */}
-        <p>{props.champ.minions}</p>
+        <p>{(props.champ.minions/props.champ.duration*60).toFixed(2)}</p>
       </div>
       {/* Game duration */}
       <div className="column is-narrow">

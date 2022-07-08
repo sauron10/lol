@@ -56,10 +56,6 @@ body{
 
 
 
-/* .column > .px-6 > .columns{
-  max-width: 1000px;
-} */
-
 .column > .px-6 > .columns > .column > .container {
   background: rgba(232,69,69, .8);
   max-width: 200px;
@@ -75,19 +71,15 @@ body{
 }
 
 
-
+/* 
 .column{
   max-width: 1000px;
-}
+} */
 
 
 
 .item-column{
   width: 150px;
-}
-
-tr, td{
-  border-radius: 10px;
 }
 
 td,th {
@@ -98,8 +90,6 @@ tr:nth-child(even) {background-color: rgba(187,225,250);}
 
 table{
   margin: auto;
-  border: 5px solid;
-  border-color: #0F4C75;
 }
 
 .win{
@@ -201,9 +191,19 @@ a:link,a:visited{
 .card{
   min-height: 250px;
   background-color: #0F4C75 !important;
+
 }
 
 .champion-chart-container{
-  margin: auto;
-  max-width: 250px;
+    margin: auto;
+    /* min-height: 350px; */
+}
+
+.background-table > * > tr{
+  background-color: rgba(27,38,44, 1);
+  color: white !important;
+}
+
+.background-table > * > tr >th{
+  color: white !important;
 }

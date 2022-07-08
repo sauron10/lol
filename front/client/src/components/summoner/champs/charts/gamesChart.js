@@ -1,22 +1,27 @@
-import { VictoryPie } from "victory"
+import { PieChart, Pie, Cell} from "recharts"
 
 export const GamesChart = (props) => {
   return (
-    <VictoryPie
-      colorScale={['purple', 'blue', 'red']}
-      innerRadius={135}
-      cornerRadius={70}
-      data={props.victoryData}
-      labelRadius={160}
-      labelPlacement = {'perpendicular'}
-      
-      padAngle={1}
-      style={{
-        labels: {
-          fill: 'white',
-          fontSize: 25
-        }
-      }}
-    />
+    <PieChart width={350} height={250}>
+      <Pie
+        data={props.data}
+        dataKey="value"
+        nameKey="name"
+        cx="50%"
+        cy="50%"
+        fill='grey'
+        label={({name}) => name}
+        // labelLine = {false}
+        innerRadius='80'
+        outerRadius='90'
+        isAnimationActive={false}
+        animationEasing='ease-in'
+        >
+
+        	{
+          	props.data.map((entry, index) => <Cell key={index} fill={['#0F4C75','gray'][index]}/>)
+          }
+        </Pie>
+    </PieChart>
   )
 }

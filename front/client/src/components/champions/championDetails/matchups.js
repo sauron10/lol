@@ -1,8 +1,16 @@
 import { ChampionImage } from "../../summoner/championImage"
+import { useNavigate } from "react-router-dom"
 
 export const Matchups = props => {
+  const nav = useNavigate()
+
+  const navigate = (name) => {
+    nav(`/champions/${name}`)
+    props.dispatch({type:'changeName', payload:name})
+  }
+
   return(
-    <table className="table has-text-centered">
+    <table className="table has-text-centered background-table" >
       <thead>
         <tr>
           <th>Image</th>
@@ -13,7 +21,7 @@ export const Matchups = props => {
       </thead>
       <tbody>
         {props?.vs?.map(versus => (
-          <tr>
+          <tr className="clickable" onClick={() => navigate(versus.name)} key={versus.name}> 
             <td><ChampionImage size={'is-48x48'} image={versus.image}/></td>
             <th>{versus.name}</th>
             <td>{versus.matches}</td>

@@ -88,7 +88,7 @@ export const ChampionsList = () => {
     <>
       <ChampionFilters versions={versions} dispatch={dispatch} ACTIONS={ACTIONS} name={state.name} isLane={isLane} />
       <div className="table-container">
-        <table className="table has-text-centered">
+        <table className="table has-text-centered background-table">
           <thead>
             <tr>
               <th>Image</th>

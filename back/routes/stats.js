@@ -56,12 +56,21 @@ router.get('/items/winrate/', async (req, res, next) => {
   return res.json(result)
 })
 
+router.get('/items/common/:champion/', async (req, res, next) => {
+  const {queue,version} = req.query
+  const {champion} = req.params
+  console.log(champion,queue,version)
+  const result = await intStatsItem.commonItemsByChampion(champion,queue,version)
+  return res.json(result)
+})
+
 router.get('/items/common/:summoner/:champion/', async (req, res, next) => {
   const {queue,version} = req.query
   const {summoner,champion} = req.params
   const result = await intStatsItem.commonItemsBySummonerChampion(summoner,champion,queue,version)
   return res.json(result)
 })
+
 
 //Summoner
 router.get('/patch/winrate/:summoner/', async (req, res, next) => {

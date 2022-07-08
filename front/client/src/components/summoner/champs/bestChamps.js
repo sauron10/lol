@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useReducer } from "react"
+import { useEffect, useCallback, useReducer, useMemo } from "react"
 import { useGetChamps } from "../../../customHooks/requestChamp"
 import { ChampCard } from "./champCard"
 import { ChampionDetails } from "./champDetails"
@@ -34,9 +34,9 @@ const reducer = (state, action) => {
 export const BestChamps = (props) => {
   const [state, dispatch] = useReducer(reducer, {}, init)
   const [champs, setChamps] = useGetChamps(props.summoner, state.queue)
-  const memoSetChamps = useCallback(setChamps, [setChamps])
+  // const memoSetChamps = useCallback(setChamps, [setChamps])
 
-  useEffect(() => {
+  const orderedChamps = useMemo(() => {
     const compare = (a, b) => {
       const aKda = (parseFloat(a.kills) + parseFloat(a.assists)) / parseFloat(a.deaths)
       const bKda = (parseFloat(b.kills) + parseFloat(b.assists)) / parseFloat(b.deaths)
@@ -45,17 +45,17 @@ export const BestChamps = (props) => {
     }
     switch (state.order) {
       case 'kda':
-        return memoSetChamps((preChamps) => [...preChamps].sort(compare))
+        return  champs.sort(compare)
       case 'games':
-        return memoSetChamps((preChamps) => [...preChamps].sort((a, b) => b.games - a.games))
+        return champs.sort((a, b) => b.games - a.games)
       case 'farm':
-        return memoSetChamps((preChamps) => [...preChamps].sort((a, b) => b.minions - a.minions))
+        return champs.sort((a, b) => b.minions/b.duration - a.minions/a.duration)
       case 'duration':
-        return memoSetChamps((preChamps) => [...preChamps].sort((a, b) => b.duration - a.duration))
+        return champs.sort((a, b) => b.duration - a.duration)
       default:
         break
     }
-  }, [state.order, state.queue, memoSetChamps])
+  }, [state.order,champs])
 
   return !props.state.champion.activated ? (
     <>
@@ -79,12 +79,10 @@ export const BestChamps = (props) => {
         </div>
       </div>
       <div>
-        {champs.length > 0 && champs?.map(champ => (
+        {orderedChamps.length > 0 && orderedChamps?.map(champ => (
           <div key={champ.name}
             onClick={() => {
               props.dispatch({type:props.ACTIONS.openChampionCard,payload:{champion:{activated:true,champion:champ},tab:state.queue,index:20}})
-              // props.setSelectedTab(() => state.queue)
-              // props.cleanMatches()
             }}>
             <ChampCard champ={champ} key={champ.name} />
           </div>

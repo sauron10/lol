@@ -83,13 +83,14 @@ export const Summoner = (props) => {
   return (
     <>
       <Nav page={'summoner'} />
-      <div className='columns is-centered ' style={{ maxWidth: width }}>
+      <div className='columns is-centered ' style={width<1500 ?{ maxWidth: width }:{}}>
+        {/* Padding */}
+        {width>2000 ? <div className="column is-0 is-2-fullhd"></div>:<></>}
         {/* First column */}
         <div className="column is-narrow p-0 m-5">
           {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} time={time} />}
           <PlayedWith summoner={summoner} queue={state.tab} />
         </div>
-        {/* {width < 500 && isLoaded && <MobileSummonerCard summoner={data} loaded={loaded} />} */}
         {/* Second column */}
         <div className="column p-0 m-5">
           <div className="px-6">
@@ -138,6 +139,9 @@ export const Summoner = (props) => {
             ACTIONS={ACTIONS}
           />
         </div>}
+        {/* Padding */}
+        {width>2000 ? <div className="column is-0 is-2-fullhd"></div>:<></>}
+
       </div>
     </>
   );
