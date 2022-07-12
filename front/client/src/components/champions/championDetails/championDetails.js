@@ -21,6 +21,8 @@ const reducer = (state, action) => {
       return { ...state, vs: action.payload }
     case 'changeInfo':
       return { ...state, info: action.payload }
+    case 'changeLane':
+      return {...state, lane:action.payload}
     default:
       return state
   }
@@ -29,24 +31,26 @@ const reducer = (state, action) => {
 
 
 export const ChampionDetails = (props) => {
-  const [state, dispatch] = useReducer(reducer, { name: props.champion().champion, best: [], winrates: [], lanes: [], vs: [], info: {} })
+  const [state, dispatch] = useReducer(reducer, { name: props.champion().champion, best: [], winrates: [], lanes: [], vs: [], info: {}, lane:'%' })
   const { bestSummoners, loaded, winrateByPatch, commonLane, championVsChampion, championInfo } = useChampionStats()
 
   useEffect(() => {
     bestSummoners(state.name).then(d => dispatch({ type: 'changeBest', payload: d }))
-    winrateByPatch(state.name).then(d => dispatch({ type: 'changeWinrate', payload: d }))
     commonLane(state.name).then(d => dispatch({ type: 'changeCommonLanes', payload: d }))
-    championVsChampion(state.name).then(d => dispatch({ type: 'changeChampionVsChampion', payload: d }))
     championInfo(state.name).then(d => dispatch({ type: 'changeInfo', payload: d }))
-  }, [championInfo, championVsChampion, commonLane, winrateByPatch, bestSummoners, state.name])
+  }, [championInfo,commonLane, bestSummoners, state.name])
+
+  useEffect(() => {
+    winrateByPatch(state.name).then(d => dispatch({ type: 'changeWinrate', payload: d }))
+    championVsChampion(state.name,state.lane).then(d => dispatch({ type: 'changeChampionVsChampion', payload: d }))
+  },[championVsChampion, state.lane, state.name, winrateByPatch])
 
   const nav = useNavigate()
-
 
   return (
     <>
       <div>
-        {loaded && <ChampionCard {...state} />}
+        {loaded && <ChampionCard {...state} dispatch={dispatch} />}
       </div>
       <hr/>
       <div className="my-5">
@@ -73,7 +77,7 @@ export const ChampionDetails = (props) => {
        <hr/>
        <div className="my-5">
         <p className="title has-text-centered has-text-white">Matchups</p>
-        <Matchups vs={state.vs} dispatch = {dispatch}/>
+        {loaded ? <Matchups vs={state.vs} dispatch = {dispatch}/>:<p>CArgando</p>}
        </div>
     </>
   )

@@ -21,7 +21,7 @@ export const Matchups = props => {
       </thead>
       <tbody>
         {props?.vs?.map(versus => (
-          <tr className="clickable" onClick={() => navigate(versus.name)} key={versus.name}> 
+          <tr className="clickable" onClick={() => navigate(versus.name)} key={`${versus.name}-${versus.individual_position}`}> 
             <td><ChampionImage size={'is-48x48'} image={versus.image}/></td>
             <th>{versus.name}</th>
             <td>{versus.matches}</td>

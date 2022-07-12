@@ -16,8 +16,6 @@ const padPatch = patch => {
 }
 
 export const ChampionCard = (props) => {
-  const { width } = useWindowDimensions()
-
   const games = useMemo(() => {
     return props?.lanes?.map((lane, index) => ({ name: index < 3 ? lane.individual_position.slice(0, 3) : '', value: parseInt(lane.games) }))
   }, [props.lanes])
@@ -59,6 +57,19 @@ export const ChampionCard = (props) => {
                     <div className="columns is-mobile is-gapless">
                       <div className="column"></div>
                       <div className="column is-narrow">
+                        <div className="control has-text-centered">
+                          {/* Position */}
+                          <div className="select">
+                            <select value={props.lane} onChange={e => props.dispatch({ type: 'changeLane', payload: e.target.value })}>
+                              <option label="Any" value='%'></option>
+                              <option label='Top' value='TOP'></option>
+                              <option label='Jung' value='JUNGLE'></option>
+                              <option label='Mid' value='MIDDLE'></option>
+                              <option label='Bot' value='BOTTOM'></option>
+                              <option label='Sup' value='UTILITY'></option>
+                            </select>
+                          </div>
+                        </div>
                         <RoleChart data={games} />
                       </div>
                       <div className="column"></div>

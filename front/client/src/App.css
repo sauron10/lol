@@ -207,3 +207,7 @@ a:link,a:visited{
 .background-table > * > tr >th{
   color: white !important;
 }
+
+.matches-column{
+  max-width: 1000px;
+}

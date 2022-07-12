@@ -165,8 +165,9 @@ const commonLaneForChampion = async (champion, version) => {
 
 const championVsChampionWinrate = async (champion, position, queue) => {
   try {
+    console.log({champion, position, queue})
     const res = await db.query(`
-    select c.name,c.image,
+    select c.name,c.image,ms.individual_position,
     count(*) as matches,
     count(*) filter(where ms.win = true) as wins,
     cast((count(*) filter(where ms.win = true)*100.0/count(*))as decimal(5,2) ) as winrate
@@ -178,7 +179,7 @@ const championVsChampionWinrate = async (champion, position, queue) => {
           join champion_ms cm on cm.match_summoner_id = ms.id 
           join champion c on c.id = cm.champion_id
           join match m on ms.match_id = m.id
-            where lower(c."name") = lower($1) and m.queue_id = $3) and lower(ms.individual_position) = lower($2) and lower(c.name) != lower($1) 
+            where lower(c."name") = lower($1) and m.queue_id = $3 and lower(ms.individual_position) like lower($2)) and lower(ms.individual_position) like lower($2) and lower(c.name) != lower($1) 
             group by c.name,c.image,ms.individual_position
             having count(*) > 20
             order by winrate desc    

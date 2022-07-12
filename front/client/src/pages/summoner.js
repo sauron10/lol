@@ -86,14 +86,14 @@ export const Summoner = (props) => {
       <div className='columns is-centered ' style={width<1500 ?{ maxWidth: width }:{}}>
         {/* Padding */}
         {width>2000 ? <div className="column is-0 is-2-fullhd"></div>:<></>}
-        
+
         {/* First column */}
         <div className="column is-narrow p-0 m-5">
           {isLoaded && <SummonerCard summoner={data} updateProfile={updateProfile} getSeasonMatches={getSeasonMatches} loaded={loaded} time={time} />}
           <PlayedWith summoner={summoner} queue={state.tab} />
         </div>
         {/* Second column */}
-        <div className="column p-0 m-5">
+        <div className="column p-0 m-5 matches-column">
           <div className="px-6">
             <div className="columns">
               <div className="column">
