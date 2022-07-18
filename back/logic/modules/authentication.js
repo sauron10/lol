@@ -8,7 +8,7 @@ const authenticate = async (req, res, next) => {
   try {
     console.log(req.originalUrl)
     console.log({body:req.body})
-    if (process.env.ENV === 'dev'){
+    if (process.env.ENV === 'dev' || true){
       if(req.originalUrl === '/signin/' || req.originalUrl === '/signup/'){
         next()
         return 
