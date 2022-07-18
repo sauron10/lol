@@ -5,7 +5,7 @@ export const FarmChart = (props) => {
     <LineChart width={350} height={250} data={props.data} >
       <CartesianGrid strokeDasharray='1 8' />
       <XAxis dataKey='name' height={35} dy={10} style={{ fill: 'white' }} />
-      <YAxis style={{ fill: 'white' }} />
+      <YAxis style={{ fill: 'white' }} width={25} />
       <Tooltip />
       <Line type='monotone' dataKey='value' name='minions'/>
     </LineChart>

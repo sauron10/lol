@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt')
 const authenticate = async (req, res, next) => {
   try {
     console.log(req.originalUrl)
+    console.log({body:req.body})
     if (process.env.ENV === 'dev'){
       if(req.originalUrl === '/signin/' || req.originalUrl === '/signup/'){
         next()
@@ -21,6 +22,7 @@ const authenticate = async (req, res, next) => {
     const { token, username, password } = req.body.username ? req.body : req.query
     const [user] = await uDb.searchUser({ type: 'name', payload: username })
     if (!user) throw 'user does not exist'
+    req.userInfo = user
     if (token) {
       const uToken = jwt.verify(token, process.env.PRIVATE_KEY)
       if (uToken.username !== user.name) throw 'Token is not valid'

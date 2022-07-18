@@ -80,37 +80,7 @@ router.get('/summoner/:summonerName/champion/rank', async (req, res, next) => {
   return res.json(result)
 })
 
-// Populators
-router.get('/populators/icon', async (req, res, next) => {
-  const result = await populators.profileIconPopulator()
-  return res.json(result)
-})
 
-router.get('/populators/champs', async (req, res, next) => {
-  const result = await populators.championPopulator()
-  return res.json(result)
-})
-
-router.get('/populators/items', async (req, res, next) => {
-  const result = await populators.itemPopulator()
-  return res.json(result)
-})
-
-router.get('/populators/spells', async (req, res, next) => {
-  const result = await populators.summonerSpellPopulator()
-  return res.json(result)
-})
-
-router.get('/populators/runes', async (req, res, next) => {
-  console.log('Getting runes')
-  const result = await populators.runesPopulator()
-  return res.json(result)
-})
-
-router.get('/populators/league', async (req, res, next) => {
-  const result = await leagueControl.populateLeague()
-  return res.json(result)
-})
 
 
 router.get('/get/allChamps', async (req, res, next) => {

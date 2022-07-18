@@ -12,7 +12,7 @@ export const ChampionDetails = (props) => {
           onClick={() => props.dispatch({type:props.ACTIONS.restore})}
         />
       </div>
-      <DetailsHeader champion={props.champion} data={props.data} />
+      {props?.data ? <DetailsHeader champion={props.champion} data={props.data} />:null}
     </>
   )
 }

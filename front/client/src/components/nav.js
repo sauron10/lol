@@ -66,6 +66,7 @@ const Nav = (props) => {
   const handleSubmit = e => {
     try {
       e.preventDefault()
+      props.dispatch({type:1})
       navigate(`/summoner/${search}`);
       // window.location.reload();
     } catch (e) {
@@ -132,80 +133,5 @@ const Nav = (props) => {
 
   )
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// <nav className="navbar" role="navigation" aria-label="main navigation">
-
-//   <div className="navbar-brand">
-//     <div className="image is-64x64 clickable" onClick={() => navigate('/')}>
-//       <img
-//         src={logo}
-//         alt="logo"
-//       />
-//     </div>
-//   </div>
-
-//   <div className="navbar-menu is-active">
-//     <div className="navbar-end">
-//       <div className="navbar-item">
-//         <div className="buttons">
-//           {props.page !== 'home' &&
-//             <form className="form" onSubmit={handleSubmit}>
-//               <div className="field navbar-input has-addons mx-5 mb-0">
-//                 <input className="input" type='text' onChange={handleChange} value={search} placeholder='Summoner'></input>
-//               </div>
-//             </form>}
-//           {vars.route !== '' && !authenticated &&
-//             (<button className="button main-color"
-//               onClick={() => {
-//                 setModalOpened(prevMod => !prevMod)
-//               }}>
-//               <strong>Sign up</strong>
-//             </button>
-//             )}
-//           {!authenticated &&
-//             <button className="button is-light"
-//               onClick={() => setLoginOpened(prevLog => !prevLog)}
-//             >
-//               Login
-//             </button>}
-//           {authenticated &&
-//             <button className="button is-light"
-//               onClick={logOut}
-//             >
-//               Logout
-//             </button>}
-//         </div>
-//       </div>
-//     </div>
-//     {modalOpened &&
-//       <AuthenticationModal setModalOpened={setModalOpened} setSuccess={setSuccess} setCookie={Cookies.set} />}
-//     {success &&
-//       <SuccessModal setSuccess={setSuccess} />}
-//     {loginOpened &&
-//       <LoginModal setLoginOpened={setLoginOpened} toggleAuthentication={toggleAuthentication} setCookie={Cookies.set} />
-//     }
-//   </div>
-// </nav>
-
 
 export default Nav;

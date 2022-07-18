@@ -7,4 +7,5 @@ front/client/public/ranked-emblems
 front/client/public/champion
 back/.env
 front/client/build/
+jsons/
 

@@ -9,50 +9,56 @@ const reducer = (state, action) => {
     case 'restore':
       const { name } = action.payload
       return { name }
-    case 'changeName':      
-      return {...state,name:action.payload}
-    case 'changeBest':
-      return { ...state, best: action.payload }
-    case 'changeWinrate':
-      return { ...state, winrates: action.payload }
-    case 'changeCommonLanes':
-      return { ...state, lanes: action.payload }
-    case 'changeChampionVsChampion':
-      return { ...state, vs: action.payload }
-    case 'changeInfo':
-      return { ...state, info: action.payload }
+    case 'changeName':
+      return { ...state, name: action.payload }
     case 'changeLane':
-      return {...state, lane:action.payload}
+      return { ...state, lane: action.payload }
     default:
       return state
   }
 }
 
-
-
 export const ChampionDetails = (props) => {
-  const [state, dispatch] = useReducer(reducer, { name: props.champion().champion, best: [], winrates: [], lanes: [], vs: [], info: {}, lane:'%' })
-  const { bestSummoners, loaded, winrateByPatch, commonLane, championVsChampion, championInfo } = useChampionStats()
+  const [state, dispatch] = useReducer(reducer, { name: props.champion().champion, lane: '%' })
+  const {
+    loaded,
+    bestSummoners,
+    winratesXPatch,
+    commonLanes,
+    matchups,
+    blurbs,
+
+    getBestSummoners,
+    getWinrateByPatch,
+    getCommonLane,
+    getChampionVsChampion,
+    getChampionInfo
+  } = useChampionStats()
 
   useEffect(() => {
-    bestSummoners(state.name).then(d => dispatch({ type: 'changeBest', payload: d }))
-    commonLane(state.name).then(d => dispatch({ type: 'changeCommonLanes', payload: d }))
-    championInfo(state.name).then(d => dispatch({ type: 'changeInfo', payload: d }))
-  }, [championInfo,commonLane, bestSummoners, state.name])
+    getBestSummoners(state.name)
+    getCommonLane(state.name)
+    getChampionInfo(state.name)
+  }, [getChampionInfo, getCommonLane, getBestSummoners, state.name])
 
   useEffect(() => {
-    winrateByPatch(state.name).then(d => dispatch({ type: 'changeWinrate', payload: d }))
-    championVsChampion(state.name,state.lane).then(d => dispatch({ type: 'changeChampionVsChampion', payload: d }))
-  },[championVsChampion, state.lane, state.name, winrateByPatch])
+    getWinrateByPatch(state.name)
+    getChampionVsChampion(state.name, state.lane)
+  }, [getChampionVsChampion, state.lane, state.name, getWinrateByPatch])
 
   const nav = useNavigate()
 
   return (
     <>
       <div>
-        {loaded && <ChampionCard {...state} dispatch={dispatch} />}
+        {loaded && <ChampionCard
+          {...state}
+          winrates={winratesXPatch}
+          lanes={commonLanes}
+          info={blurbs}
+          dispatch={dispatch} />}
       </div>
-      <hr/>
+      <hr />
       <div className="my-5">
         <p className="title has-text-centered has-text-white">Best players</p>
         <table className="table has-text-centered background-table">
@@ -64,7 +70,7 @@ export const ChampionDetails = (props) => {
             </tr>
           </thead>
           <tbody>
-            {state?.best?.map(player => (
+            {bestSummoners?.map(player => (
               <tr key={player.summoner_name}>
                 <th className="clickable" onClick={() => nav(`/summoner/${player.summoner_name}`)}>{player.summoner_name}</th>
                 <td>{player.total}</td>
@@ -73,12 +79,12 @@ export const ChampionDetails = (props) => {
             ))}
           </tbody>
         </table>
-       </div>
-       <hr/>
-       <div className="my-5">
+      </div>
+      <hr />
+      <div className="mt-5">
         <p className="title has-text-centered has-text-white">Matchups</p>
-        {loaded ? <Matchups vs={state.vs} dispatch = {dispatch}/>:<p>CArgando</p>}
-       </div>
+        {loaded ? <Matchups vs={matchups} dispatch={dispatch} /> : <p>Cargando</p>}
+      </div>
     </>
   )
 }

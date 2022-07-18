@@ -55,11 +55,11 @@ const orderBy = (arr, param) => {
 }
 
 export const ChampionsList = () => {
-  const {data:champions, versions, loaded, championByWinrate, matchVersions} = useChampionStats()
+  const {winrates, versions, loaded, getChampionByWinrate, getMatchVersions} = useChampionStats()
   const [state, dispatch] = useReducer(reducer, { queue: 420, version: '%', name: '', lane: 'ANY', order: 'winrate' })
   const orderedChampions = useMemo(() => {
-    return orderBy(champions ?? [], state.order)
-  }, [state.order, champions])
+    return orderBy(winrates ?? [], state.order)
+  }, [state.order, winrates])
   const filteredChampions = useMemo(() =>
     orderedChampions?.filter(champion => (
       champion.individual_position === state.lane ||
@@ -68,12 +68,12 @@ export const ChampionsList = () => {
     , [orderedChampions, state])
 
   useEffect(() => {
-    matchVersions()
-  }, [matchVersions])
+    getMatchVersions()
+  }, [getMatchVersions])
 
   useEffect(() => {
-    championByWinrate(state.queue, state.version)
-  }, [state.queue, state.version, championByWinrate])
+    getChampionByWinrate(state.queue, state.version)
+  }, [state.queue, state.version, getChampionByWinrate])
 
   const isLane = useMemo(() => {
     if ([420, 400, 440].includes(parseInt(state.queue))) {

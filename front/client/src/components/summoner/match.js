@@ -58,20 +58,6 @@ export const Match = (props) => {
     return props.position < start && props.position > end
   }
 
-  const getKillPart = () => {
-    const ka = props.summoner.kills + props.summoner.assists
-    const team = props.summoner.team
-    let teamKills = 0
-    props.summoner.teams.forEach(t => {
-      if (t.team_number === team) {
-        teamKills = t.champion_kills
-      }
-    })
-    return (ka / teamKills * 100).toFixed(1)
-  }
-
-
-
   return (props.summoner.queue_id in matchId) ? (
 
     <>
@@ -132,7 +118,7 @@ export const Match = (props) => {
           {/* Kill participation */}
           {props.position > 475 && <div className="column is-narrow pt-5 px-2">
             <p>KP</p>
-            <p>{getKillPart()}%</p>
+            <p>{props.summoner.kp}%</p>
           </div>}
           {/* Players */}
           {(isInsideRange(5000, 1405) || isInsideRange(770, 660) || isInsideRange(1100,1020)) && <div className="column">

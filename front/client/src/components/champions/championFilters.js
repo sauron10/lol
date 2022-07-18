@@ -14,9 +14,8 @@ const queuesLst = [420, 400, 900, 440, 450]
 
 
 export const ChampionFilters = (props) => {
-  const { dispatch, ACTIONS, name, isLane } = props
+  const { versions,dispatch, ACTIONS, name, isLane } = props
   const { width } = useWindowDimensions()
-
 
   return (
     <>
@@ -28,7 +27,7 @@ export const ChampionFilters = (props) => {
               <div className="select">
                 <select onChange={e => dispatch({ type: ACTIONS.changeVersion, payload: e.target.value })}>
                   <option label="All" value=''></option>
-                  {props?.versions.map((version, index) => <option key={index}>{version}</option>)}
+                  {versions.map((version, index) => <option key={index}>{version}</option>)}
                 </select>
               </div>
             </div>

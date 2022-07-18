@@ -1,4 +1,4 @@
-import { useCallback, useReducer, useState } from "react"
+import { useCallback, useReducer} from "react"
 import axios from "axios"
 import { vars } from "../../page-assets/route"
 import Cookies from "js-cookie"
@@ -24,7 +24,7 @@ const reducer = (state,action) => {
     case 'setBestSummoners':
       return {...state,bestSummoners:action.payload}
     case 'setWinratesXPatch':
-      return {...state,winrateByPatch:action.payload}
+      return {...state,winratesXPatch:action.payload}
     case 'setCommonLanes':
       return {...state,commonLanes:action.payload}
     case 'setMatchups' : 
@@ -32,6 +32,7 @@ const reducer = (state,action) => {
     case 'setBlurbs' : 
       return {...state,blurbs:action.payload}
     default:
+      console.log('Shouldnt defautlt')
       return state
   }
 }
@@ -40,7 +41,7 @@ export const useChampionStats = () => {
 
   const [state,dispatch]=useReducer(reducer,iniReducer)
 
-  let championByWinrate = async (queue, version) => {
+  let getChampionByWinrate = async (queue, version) => {
     try {
       dispatch({type:'setLoaded',payload:false})
       const query = `?username=${Cookies.get('username')}&token=${Cookies.get('authToken')}&queue=${queue}&version=${version}%`
@@ -54,7 +55,7 @@ export const useChampionStats = () => {
     }
   }
 
-  let matchVersions = async () => {
+  let getMatchVersions = async () => {
     try {
       dispatch({type:'setLoaded',payload:false})
       const sliceVersion = (version) => {
@@ -70,7 +71,7 @@ export const useChampionStats = () => {
         const formattedVersions = res.data.map(version => sliceVersion(version.game_version))
         const uniqueVersions = [...new Set(formattedVersions)]
         uniqueVersions.sort((a, b) => b - a)
-        dispatch({type:'setVersions',payload:res.data})
+        dispatch({type:'setVersions',payload:uniqueVersions})
       }
     } catch (e) {
       console.log('Error getting matches patches: ', e)
@@ -80,7 +81,7 @@ export const useChampionStats = () => {
     }
   }
 
-  let bestSummoners = async (champion) => {
+  let getBestSummoners = async (champion) => {
     try {
       dispatch({type:'setLoaded',payload:false})
       const query = `?queue=420&username=${Cookies.get('username')}&token=${Cookies.get('authToken')}`
@@ -95,7 +96,7 @@ export const useChampionStats = () => {
     }
   }
 
-  let winrateByPatch = async (champion) => {
+  let getWinrateByPatch = async (champion) => {
     try {
       dispatch({type:'setLoaded',payload:false})
       const query = `?queue=420&username=${Cookies.get('username')}&token=${Cookies.get('authToken')}`
@@ -110,7 +111,7 @@ export const useChampionStats = () => {
     }
   }
 
-  let commonLane = async (champion) => {
+  let getCommonLane = async (champion) => {
     try {
       dispatch({type:'setLoaded',payload:false})
       const query = `?version=%&username=${Cookies.get('username')}&token=${Cookies.get('authToken')}`
@@ -125,7 +126,7 @@ export const useChampionStats = () => {
     }
   }
 
-  let championVsChampion = async (champion,position) => {
+  let getChampionVsChampion = async (champion,position) => {
     try {
       dispatch({type:'setLoaded',payload:false})
       let query = `?username=${Cookies.get('username')}&token=${Cookies.get('authToken')}`
@@ -141,7 +142,7 @@ export const useChampionStats = () => {
     }
   }
 
-  let championInfo = async (champion) => {
+  let getChampionInfo = async (champion) => {
     try {
       dispatch({type:'setLoaded',payload:false})
       const query = `?username=${Cookies.get('username')}&token=${Cookies.get('authToken')}`
@@ -156,23 +157,23 @@ export const useChampionStats = () => {
     }
   }
 
-  championByWinrate = useCallback(championByWinrate, [])
-  matchVersions = useCallback(matchVersions, [])
-  bestSummoners = useCallback(bestSummoners, [])
-  winrateByPatch = useCallback(winrateByPatch, [])
-  commonLane = useCallback(commonLane, [])
-  championVsChampion = useCallback(championVsChampion, [])
-  championInfo = useCallback(championInfo, [])
+  getChampionByWinrate = useCallback(getChampionByWinrate, [])
+  getMatchVersions = useCallback(getMatchVersions, [])
+  getBestSummoners = useCallback(getBestSummoners, [])
+  getWinrateByPatch = useCallback(getWinrateByPatch, [])
+  getCommonLane = useCallback(getCommonLane, [])
+  getChampionVsChampion = useCallback(getChampionVsChampion, [])
+  getChampionInfo = useCallback(getChampionInfo, [])
 
   return {
     ...state,
-    championByWinrate,
-    matchVersions,
-    bestSummoners,
-    winrateByPatch,
-    commonLane,
-    championVsChampion,
-    championInfo
+    getChampionByWinrate,
+    getMatchVersions,
+    getBestSummoners,
+    getWinrateByPatch,
+    getCommonLane,
+    getChampionVsChampion,
+    getChampionInfo
   }
 
 
