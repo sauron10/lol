@@ -23,7 +23,6 @@ const SummonerCard = (props) => {
   }
   
   const timeFormat = (secC) => {
-    console.log(secC)
     const zero = n => String(n).padStart(2,'0')
     
     

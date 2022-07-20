@@ -42,7 +42,6 @@ export const useGetSummoner = summonerName => {
       console.log('Error getting winrates per patch: ', e)
     } finally {
       setLoaded(true)
-
     }
   }
 

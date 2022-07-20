@@ -80,7 +80,7 @@ export const Summoner = (props) => {
   useEffect(() => {
     getWinrate(summoner)
     getWastedTime()
-  }, [summoner, getWinrate,getWastedTime])
+  }, [summoner, getWinrate,getWastedTime,data?.summoner_name])
 
   const loadMore = () => {
     dispatch({ type: ACTIONS.changeIndex, payload: state.index + 20 })
