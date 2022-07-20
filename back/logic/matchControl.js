@@ -30,7 +30,7 @@ const requestMatchList = async (summ, queue, start, count = 10) => {
     let response = []
     while (flag) {
       await gH.timer()
-      response = await axios.get(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${summ.puuid}/ids?queue=${queue}&start=${start}&count=${count}`, connection.config)
+      response = await axios.get(`https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/${summ.puuid}/ids?${queue ? `queue=${queue}`:''}&start=${start}&count=${count}`, connection.config)
       flag = await gH.waitLimit(response)
     }
     return await saveMatches(response.data, summ)

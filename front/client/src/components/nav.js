@@ -74,17 +74,22 @@ const Nav = (props) => {
     }
   }
 
+
   // console.log(authenticated);
   return (
     <div className="columns is-mobile is-centered m-0 p-0 is-vcentered">
       {/* Logo */}
-      <div className="column p-0 m-3">
+      <div className="column p-0 m-3 is-narrow">
         <div className="image clickable logo" onClick={() => navigate('/')}>
           <img
             src={logo}
             alt="logo"
           />
         </div>
+      </div>
+      {/* Champions */}
+      <div className="column is-left">
+        <button className="button" onClick={() => navigate('/champions/')}>{width < 500 ? 'C':'Champions'}</button>
       </div>
       {/* Search */}
       <div className={"column is-narrow p-0 mr-4" + width >= 375 ? '':'small-input'}>

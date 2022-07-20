@@ -26,8 +26,6 @@ const padPatch = patch => {
 
 export const ChampionCard = (props) => {
   const [isLore, setIsLore] = useState(false)
-  console.log('Card repainted')
-
   const games = useMemo(() => {
     return props?.lanes?.map((lane, index) => ({ name: index < 3 ? lane.individual_position.slice(0, 3) : '', value: parseInt(lane.games) }))
   }, [props.lanes])

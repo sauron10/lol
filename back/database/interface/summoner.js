@@ -1,101 +1,17 @@
 const db = require('../index')
 const sqlTools = require('../sql_helper')
 
-// const getSummonerInfo = async (summonerName, numberOfMatches, queue) => {
-//   console.log(summonerName)
-//   const numberFlag = Number.isInteger(numberOfMatches)
-
-//   const number = numberFlag ? numberOfMatches : 10
-
-//   const summoners = sqlTools.nestQuery(`
-//   SELECT *
-//   FROM summoner_spells_ms ssm
-//   JOIN summoner_spells sp on sp.id = ssm.summoner_spell_id
-//   WHERE ms.id = ssm.match_summoner_id  
-//   `)
-
-//   const runes = sqlTools.nestQuery(`
-//   SELECT *
-//   FROM match_summoner_runes msr
-//   JOIN runes r on r.id = msr.rune_id
-//   WHERE msr.match_summoner_id = ms.id  
-//   `)
-
-//   const items = sqlTools.nestQuery(`
-//   SELECT *
-//   FROM match_summoner_items msi
-//   JOIN items i on i.id = msi.item_id
-//   WHERE msi.match_summoner_id = ms.id  
-//   `)
-
-//   const players = sqlTools.nestQuery(`
-//   SELECT *,
-//   ${summoners} as summoners,
-//   ${runes} as runes,
-//   ${items} as items
-//   FROM match_summoner ms
-//   JOIN champion_ms cm ON ms.id = cm.match_summoner_id
-//   JOIN champion c ON c.id = cm.champion_id
-//   WHERE m.id = ms.match_id
-//   ORDER BY team, participant
-//   `)
-
-//   const bans = sqlTools.nestQuery(`
-//   SELECT name,image
-//   FROM bans ba
-//   JOIN champion ON ba.champion_id = champion.id
-//   WHERE ba.team_id = te.id
-//   `)
-
-//   const teams = sqlTools.nestQuery(`
-//   SELECT *,
-//   ${bans} as bans
-//   FROM team te
-//   WHERE te.match_id = m.id 
-//   ORDER BY te.team_number 
-//   `)
-
-//   const matches = sqlTools.nestQuery(`
-//   SELECT *,
-//   ${summoners} as summoner_spells,
-//   ${runes} as runes,
-//   ${items} as items,
-//   ${players} as players,
-//   ${teams} as teams
-//   FROM match m 
-//   JOIN match_summoner ms ON m.id = ms.match_id
-//   JOIN champion_ms cm ON ms.id = cm.match_summoner_id
-//   JOIN champion c ON c.id = cm.champion_id
-//   WHERE ms.summoner_id = s.id ${queue}
-//   ORDER BY game_creation DESC
-//   FETCH FIRST ${number} ROWS ONLY
-//   `)
-
-//   const leagues = sqlTools.nestQuery(`
-//   SELECT sl.tier,rank,league_points,wins,losses,date,queue_type
-//   FROM summoner_league sl
-//   JOIN league l on l.id = sl.league_id
-//   WHERE sl.summoner_id = s.id
-//   ORDER BY sl.date   
-//   `)
-
-//   const response = await db.query(`
-//   SELECT summoner_name,summoner_level,image as icon, 
-//   ${leagues} as leagues,
-//   ${matches} as matches
-//   FROM summoner s
-//   JOIN profile_icon_summoner pis on pis.summoner_id = s.id
-//   JOIN profile_icon pi on pi.id = pis.profile_icon_id
-//   WHERE lower(s.summoner_name) = lower($1)
-  
-//   `, [
-//     summonerName,
-//   ])
-//   return {
-//     'rows': response.rows.length,
-//     'data': response.rows
-//   }
-// }
+/**
+ * Get matches with filters, including players, items, spells,
+ * runes,bans,teams etc
+ * @param {String} summonerName Name of the summoner
+ * @param {Number} queue ID of the queue
+ * @param {Number} champion Id of the champion
+ * @param {Number} start Offset for the response rows
+ * @param {Number} number Number of expected result rows
+ * @param {Array} matchList List of matches already in frontEnd (filtering)
+ * @returns {Array} Returns an array of matches consistent with prevoius filters
+ */
 
 const getMatches = async (summonerName, queue,champion,start,number,matchList) => {
   const isQueue = queue ? true:false
@@ -184,11 +100,16 @@ const getMatches = async (summonerName, queue,champion,start,number,matchList) =
   `,[summonerName,number,start,queue,champion].filter(item => item !== null)
   )
 
-  const [miau] = response.rows
-  console.log(miau.matches.map(ele => ele.match_id))
   return response.rows
 
 }
+
+/**
+ * Returns profile of a summoner including, level, ranks,
+ * icons
+ * @param {String} summonerName 
+ * @returns {Object} Returns a profile of the summoner
+ */
 
 const getProfile = async (summonerName) => {
   try {
@@ -234,10 +155,14 @@ const getProfile = async (summonerName) => {
   } catch (e) {
     console.log('Error getting profile from DB: ', e)
   }
-
-
 }
 
+
+/**
+ * Gets the total play time of a summoner
+ * @param {String} summonerName Name of the summoner 
+ * @returns {Number} Number of second wich consist in the summ of all match time
+ */
 const wastedTime = async(summonerName) => {
   const response = await db.query(`
   select 
@@ -251,11 +176,30 @@ const wastedTime = async(summonerName) => {
   return response.rows
 }
 
+/**
+ * Lighter way to test if there are the expected matches in the database or if
+ * an API request must be made
+ * @param {String} name Summoner name
+ * @param {Number} queue Id of the queue
+ * @param {Number} champion Id of the champion
+ * @param {Number} start Offset of rows
+ * @param {Number} size Number of rows expected
+ * @param {Array} matchList Matches already in the frontEnd (filtering)
+ * @returns 
+ */
+const checkMatchNumber = async(name,queue,champion,start,size,matchList) => {
+  const response = await db.query(`
+
+  
+  `)
+  return response.rows
+}
+
 
 
 module.exports = {
-  // getSummonerInfo,
   getMatches,
   getProfile,
-  wastedTime
+  wastedTime,
+  checkMatchNumber
 }

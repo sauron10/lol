@@ -71,7 +71,7 @@ export const Summoner = (props) => {
   
   useEffect(() => {
     updateData(state.index, state.tab, state.champion.champion.id,matchList);
-  }, [state.index,state.tab, summoner, updateData])
+  }, [state.index,state.tab, updateData])
 
   useEffect(() => {
     dispatch({type:ACTIONS.changeChampion, payload:{activated:false,champion:{}}})
@@ -153,7 +153,7 @@ export const Summoner = (props) => {
           </div>
         </div>
         {/* Third column */}
-        {(width > 1100 || width < 770) && <div className="column is-narrow p-0 m-5">
+        {(width > 1100 || width < 770) && <div className="column is-narrow p-0 mt-5 mr-5">
           <BestChamps
             summoner={summoner}
             state={state}

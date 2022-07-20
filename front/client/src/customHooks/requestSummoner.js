@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useDebugValue } from "react";
 import axios from "axios";
 import { vars } from "../page-assets/route";
 import Cookies from "js-cookie";
@@ -11,6 +11,7 @@ export const useGetSummoner = summonerName => {
   const [time, setTime] = useState(0)
   const [winrate, setWinrate] = useState([])
 
+  useDebugValue(data,'data')
 
   const getKP = (ka, team, teams) => {
     let teamKills = 0
