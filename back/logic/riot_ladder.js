@@ -6,7 +6,7 @@ const fs = require('fs')
 
 const config = {
   headers : {
-    "X-Riot-Token": "RGAPI-d53834f3-262c-49a5-b2d8-8c23640283ae",
+    "X-Riot-Token": process.env.RIOT_API,
     "Accept-Charset": "application/x-www-form-urlencoded; charset=UTF-8",
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.88 Safari/537.36",
   },
